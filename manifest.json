@@ -3,6 +3,7 @@
   "short_name": "SH Collector",
   "start_url": ".",
   "display": "standalone",
+  "display_override": ["fullscreen", "standalone"],
   "background_color": "#08080A",
   "theme_color": "#08080A",
   "orientation": "portrait",
