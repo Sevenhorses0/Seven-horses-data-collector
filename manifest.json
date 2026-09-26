@@ -8,13 +8,19 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "icon-512.png",
+      "src": "7H_icon_192(1).png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "7H_icon_512(1).png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icon-512.png",
+      "src": "7H_icon_512(1).png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
