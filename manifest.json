@@ -1,9 +1,10 @@
 {
   "name": "Seven Horses Collector",
   "short_name": "SH Collector",
-  "start_url": "collector.html",
+  "start_url": "index.html",
+  "scope": "./",
   "display": "standalone",
-  "display_override": ["fullscreen", "standalone"],
+  "display_override": ["standalone", "minimal-ui"],
   "background_color": "#08080A",
   "theme_color": "#08080A",
   "orientation": "portrait",
