@@ -9,88 +9,116 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow-x:hidden}
-body{font-family:-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif;background:#08080A;color:#fff;font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased;background-image:radial-gradient(circle at 10% -5%,rgba(232,184,106,.12) 0%,transparent 45%),radial-gradient(circle at 90% 110%,rgba(139,142,255,.10) 0%,transparent 45%);background-attachment:fixed;min-height:100vh;padding:30px 20px}
+body{font-family:-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif;background:#08080A;color:#fff;font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased;background-image:radial-gradient(circle at 10% -5%,rgba(232,184,106,.15) 0%,transparent 45%),radial-gradient(circle at 90% 110%,rgba(139,142,255,.12) 0%,transparent 45%);background-attachment:fixed;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:30px 20px;overflow-y:auto}
 
-.wrap{max-width:440px;margin:0 auto;text-align:center;animation:fadeIn .4s ease}
+.wrap{max-width:400px;width:100%;text-align:center;animation:fadeIn .4s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-.logo{width:96px;height:96px;border-radius:24px;background:linear-gradient(135deg,#E8B86A,#C99847);display:flex;align-items:center;justify-content:center;font-weight:800;color:#000;font-size:32px;letter-spacing:-.03em;margin:0 auto 22px;box-shadow:0 8px 32px -8px rgba(232,184,106,.5)}
+.logo{width:110px;height:110px;border-radius:28px;background:linear-gradient(135deg,#E8B86A,#C99847);display:flex;align-items:center;justify-content:center;font-weight:800;color:#000;font-size:38px;letter-spacing:-.03em;margin:0 auto 26px;box-shadow:0 10px 40px -8px rgba(232,184,106,.5)}
 
-h1{background:linear-gradient(135deg,#E8B86A 0%,#C99847 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-size:32px;font-weight:800;letter-spacing:-.025em;margin-bottom:6px;line-height:1.15}
+h1{background:linear-gradient(135deg,#E8B86A 0%,#C99847 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-size:34px;font-weight:800;letter-spacing:-.025em;margin-bottom:8px;line-height:1.15}
 
-.sub{color:#71717a;font-size:14px;margin-bottom:30px}
+.sub{color:#71717a;font-size:15px;margin-bottom:20px}
 
-.card{background:linear-gradient(180deg,rgba(20,20,23,.92) 0%,rgba(17,17,19,.96) 100%);border:1px solid rgba(36,36,40,.85);border-radius:18px;padding:22px;margin-bottom:14px;text-align:left}
+.chrome-hint{background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.25);border-radius:12px;padding:12px 16px;margin:0 auto 30px;max-width:340px;font-size:12px;color:#93c5fd;display:flex;align-items:center;gap:10px;text-align:left;line-height:1.5}
+.chrome-hint .icon{font-size:20px;flex-shrink:0}
+.chrome-hint b{color:#bfdbfe}
 
-h3{font-size:11px;font-weight:700;color:#a1a1aa;text-transform:uppercase;letter-spacing:.10em;margin-bottom:14px;text-align:center}
+button{cursor:pointer;border:none;border-radius:16px;padding:18px 24px;font-weight:700;background:#1A1A1E;color:#fff;border:1px solid #252529;transition:all .2s;font-family:inherit;font-size:16px;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;width:100%;max-width:320px;margin:0 auto}
+button:active{transform:scale(.97)}
+button.gold{background:linear-gradient(135deg,#E8B86A 0%,#C99847 100%);color:#000;border:none;box-shadow:0 8px 28px -6px rgba(232,184,106,.5)}
+button.gold:hover{box-shadow:0 10px 36px -6px rgba(232,184,106,.6);filter:brightness(1.05)}
 
-button{cursor:pointer;border:none;border-radius:14px;padding:16px 22px;font-weight:700;background:#1A1A1E;color:#fff;border:1px solid #252529;transition:all .2s;font-family:inherit;font-size:15px;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;width:100%}
-button:active{transform:scale(.98)}
-button.gold{background:linear-gradient(135deg,#E8B86A 0%,#C99847 100%);color:#000;border:none;box-shadow:0 6px 24px -6px rgba(232,184,106,.5)}
-button.gold:hover{box-shadow:0 8px 32px -6px rgba(232,184,106,.6);filter:brightness(1.05)}
-button.green{background:rgba(16,185,129,.15);color:#6ee7b7;border:1px solid rgba(16,185,129,.3)}
+/* Status screens */
+.status{display:none;flex-direction:column;align-items:center;gap:18px;width:100%}
+.status.active{display:flex;animation:fadeIn .4s ease}
 
-.features{list-style:none;padding:0;margin:0}
-.features li{padding:10px 0;border-bottom:1px solid #1A1A1E;font-size:13px;color:#e4e4e7;display:flex;align-items:center;gap:10px}
-.features li:last-child{border-bottom:none}
-.features li::before{content:'✓';color:#6ee7b7;font-weight:700;font-size:14px;flex-shrink:0}
+.spinner{width:80px;height:80px;border:5px solid rgba(232,184,106,.15);border-top-color:#E8B86A;border-radius:50%;animation:spin 1s linear infinite;position:relative}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-.hint{text-align:center;color:#71717a;font-size:12px;margin-top:14px;line-height:1.7}
-.hint b{color:#E8B86A}
+.progress-text{font-size:15px;font-weight:600;color:#e4e4e7}
+.progress-sub{font-size:12px;color:#71717a;margin-top:-8px}
+.progress-bar-wrap{width:100%;max-width:280px;height:6px;background:#1A1A1E;border-radius:3px;overflow:hidden;margin-top:4px}
+.progress-bar{height:100%;background:linear-gradient(90deg,#E8B86A,#C99847);width:0;transition:width .5s ease;border-radius:3px}
 
-footer{margin-top:26px;color:#52525b;font-size:11px;text-align:center;padding-bottom:20px}
-footer a{color:#71717a;text-decoration:none}
-footer a:hover{color:#E8B86A}
+.success-icon{width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,rgba(16,185,129,.2),rgba(16,185,129,.1));border:2px solid rgba(16,185,129,.5);display:flex;align-items:center;justify-content:center;font-size:48px;color:#6ee7b7;animation:pop .5s ease}
+@keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+
+.status h2{font-size:22px;font-weight:700;color:#e4e4e7}
+.status p{color:#71717a;font-size:14px;line-height:1.6;max-width:320px}
+.status .hint{color:#E8B86A;font-size:13px;font-weight:600;margin-top:8px;text-align:center}
+.status .hint-sub{color:#71717a;font-size:12px;text-align:center;line-height:1.6}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="logo">7H</div>
-  <h1>Seven Horses</h1>
-  <p class="sub">Data Collector — Install App</p>
 
-  <div class="card">
-    <h3>📱 Install on your device</h3>
+  <!-- Screen 1: Install button -->
+  <div id="screen-install">
+    <div class="logo">7H</div>
+    <h1>Seven Horses</h1>
+    <p class="sub">Data Collector — Install App</p>
+
+    <div class="chrome-hint">
+      <span class="icon">💡</span>
+      <span>Best experience in <b>Chrome browser</b>. Direct install, no badge.</span>
+    </div>
+
     <button class="gold" id="installBtn" onclick="installApp()">⬇️ Install App</button>
-    <button class="green" id="openBtn" style="display:none;margin-top:10px" onclick="openApp()">🚀 Open App</button>
-    <div id="installHint" class="hint" style="display:none"></div>
   </div>
 
-  <div class="card">
-    <h3>✨ Features</h3>
-    <ul class="features">
-      <li>Bulk company search from 4+ sources</li>
-      <li>Auto-enrichment (email, contact, employees)</li>
-      <li>Master list with 10,000+ tracking</li>
-      <li>Search history & duplicate prevention</li>
-      <li>CSV / Excel export to CRM</li>
-      <li>Works offline (PWA)</li>
-    </ul>
+  <!-- Screen 2: Installing (35 sec animation) -->
+  <div id="screen-installing" class="status">
+    <div class="spinner"></div>
+    <div class="progress-text" id="progressText">Preparing install...</div>
+    <div class="progress-sub" id="progressSub">Please wait, do not close this page</div>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
   </div>
 
-  <footer>
-    Seven Horses Manpower Solutions · <a href="index.html">Open Web Version</a>
-  </footer>
+  <!-- Screen 3: Success -->
+  <div id="screen-success" class="status">
+    <div class="success-icon">✓</div>
+    <h2>App Successfully Installed!</h2>
+    <p>You can find <b style="color:#E8B86A">7H Collector</b> icon on your home screen</p>
+    <div class="hint">👉 Tap the icon to open the app</div>
+    <div class="hint-sub">Also search in app drawer: "Seven Horses" or "SH Collector"</div>
+  </div>
+
+  <!-- Screen 4: Manual install instructions -->
+  <div id="screen-manual" class="status">
+    <div class="success-icon" style="background:rgba(232,184,106,.15);border-color:rgba(232,184,106,.4);color:#E8B86A">📱</div>
+    <h2>Manual Install</h2>
+    <p style="text-align:left;color:#a1a1aa;max-width:320px;margin:0 auto">
+      1. Tap browser menu (<b>⋮</b>)<br>
+      2. Select "<b>Add to Home screen</b>"<br>
+      3. Confirm
+    </p>
+    <div class="hint-sub" style="color:#93c5fd">💡 Use Chrome browser for best experience</div>
+  </div>
+
 </div>
 
 <script>
 // ==================== CONFIG ====================
-var APP_URL = 'https://sevenhorses0.github.io/Seven-horses-data-collector/index.html';
 var deferredPrompt = null;
+var progressInterval = null;
+var INSTALL_DURATION = 35000; // 35 seconds total animation
 
-// ==================== INIT ====================
-document.addEventListener('DOMContentLoaded', function(){
-  // Check if already installed
-  if(window.matchMedia('(display-mode: standalone)').matches || navigator.standalone){
-    showOpenBtn();
+// ==================== SCREEN SWITCH ====================
+function showScreen(name){
+  ['screen-install','screen-installing','screen-success','screen-manual'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el){
+      el.style.display = 'none';
+      el.classList.remove('active');
+    }
+  });
+  var target = document.getElementById('screen-' + name);
+  if(target){
+    target.style.display = 'flex';
+    target.classList.add('active');
   }
-  
-  if(navigator.getInstalledRelatedApps){
-    navigator.getInstalledRelatedApps().then(function(apps){
-      if(apps && apps.length > 0) showOpenBtn();
-    }).catch(function(){});
-  }
-});
+}
 
 // ==================== INSTALL PROMPT ====================
 window.addEventListener('beforeinstallprompt', function(e){
@@ -100,47 +128,108 @@ window.addEventListener('beforeinstallprompt', function(e){
 });
 
 window.addEventListener('appinstalled', function(){
-  console.log('✅ App installed');
+  console.log('✅ App installed event fired');
   deferredPrompt = null;
-  showOpenBtn();
+  stopProgress();
+  showScreen('success');
 });
 
-// ==================== INSTALL APP ====================
-function installApp(){
-  if(deferredPrompt){
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(function(choice){
-      if(choice.outcome === 'accepted'){
-        console.log('✅ Accepted');
-        showOpenBtn();
-      } else {
-        console.log('❌ Dismissed');
+// ==================== INSTALL PROGRESS ANIMATION ====================
+function startProgress(){
+  var texts = [
+    { pct: 0,  main: 'Preparing install...', sub: 'Please wait, do not close this page' },
+    { pct: 15, main: 'Downloading files...', sub: 'App files are being downloaded' },
+    { pct: 35, main: 'Installing components...', sub: 'Please wait, a few seconds left' },
+    { pct: 55, main: 'Setting up...', sub: 'Almost done' },
+    { pct: 75, main: 'Finalizing...', sub: 'Just a little longer' },
+    { pct: 90, main: 'Almost complete...', sub: 'App is about to be ready' },
+    { pct: 100, main: 'Completing install...', sub: '' }
+  ];
+  
+  var startTime = Date.now();
+  var bar = document.getElementById('progressBar');
+  var mainEl = document.getElementById('progressText');
+  var subEl = document.getElementById('progressSub');
+  
+  if(progressInterval) clearInterval(progressInterval);
+  
+  progressInterval = setInterval(function(){
+    var elapsed = Date.now() - startTime;
+    var pct = Math.min(100, Math.floor((elapsed / INSTALL_DURATION) * 100));
+    
+    if(bar) bar.style.width = pct + '%';
+    
+    for(var i = texts.length - 1; i >= 0; i--){
+      if(pct >= texts[i].pct){
+        if(mainEl) mainEl.textContent = texts[i].main;
+        if(subEl) subEl.textContent = texts[i].sub;
+        break;
       }
-      deferredPrompt = null;
-    });
+    }
+    
+    if(pct >= 100){
+      clearInterval(progressInterval);
+      progressInterval = null;
+    }
+  }, 300);
+}
+
+function stopProgress(){
+  if(progressInterval){
+    clearInterval(progressInterval);
+    progressInterval = null;
+  }
+}
+
+// ==================== INSTALL APP ====================
+async function installApp(){
+  if(deferredPrompt){
+    showScreen('installing');
+    startProgress();
+    
+    await sleep(500);
+    
+    try {
+      deferredPrompt.prompt();
+      var choice = await deferredPrompt.userChoice;
+      
+      if(choice.outcome === 'accepted'){
+        console.log('✅ User accepted install');
+        setTimeout(function(){
+          if(document.getElementById('screen-installing').style.display !== 'none'){
+            stopProgress();
+            showScreen('success');
+          }
+        }, 30000);
+      } else {
+        console.log('❌ User dismissed');
+        stopProgress();
+        showScreen('install');
+      }
+    } catch(e){
+      console.error('Install error:', e);
+      stopProgress();
+      showScreen('manual');
+    }
+    
+    deferredPrompt = null;
     return;
   }
   
-  // Fallback: show manual instructions
-  var hint = document.getElementById('installHint');
-  if(hint){
-    hint.style.display = 'block';
-    hint.innerHTML = '<b>Manual Install:</b><br>' +
-      '1. Tap browser menu (⋮)<br>' +
-      '2. Tap "Add to Home screen"<br>' +
-      '3. Confirm';
+  console.log('⚠️ No install prompt available');
+  showScreen('manual');
+}
+
+function sleep(ms){
+  return new Promise(function(r){ setTimeout(r, ms); });
+}
+
+// ==================== CHECK IF ALREADY INSTALLED ====================
+document.addEventListener('DOMContentLoaded', function(){
+  if(window.matchMedia('(display-mode: standalone)').matches || navigator.standalone){
+    showScreen('success');
   }
-}
-
-// ==================== OPEN APP ====================
-function openApp(){
-  window.location.href = APP_URL;
-}
-
-function showOpenBtn(){
-  document.getElementById('installBtn').style.display = 'none';
-  document.getElementById('openBtn').style.display = 'flex';
-}
+});
 </script>
 </body>
 </html>
