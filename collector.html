@@ -1,0 +1,4002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#08080A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Seven Horses — Data Collector</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SH Collector">
+<link rel="manifest" href="manifest.json">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow-x:hidden}
+body{font-family:-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif;background:#08080A;color:#fff;font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased;background-image:radial-gradient(circle at 10% -5%,rgba(232,184,106,.10) 0%,transparent 45%),radial-gradient(circle at 90% 110%,rgba(139,142,255,.08) 0%,transparent 45%);background-attachment:fixed;padding-bottom:60px}
+
+input,select,textarea{padding:14px 16px;border-radius:14px;border:1px solid #232326;background:#0E0E10;color:#fff;font-size:14px;font-family:inherit;width:100%;transition:border-color .2s,box-shadow .2s,background .2s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:rgba(232,184,106,.55);box-shadow:0 0 0 4px rgba(232,184,106,.10);background:#0C0C0E}
+input::placeholder{color:#52525b}
+select option{background:#0E0E10}
+
+button{cursor:pointer;border:none;border-radius:14px;padding:13px 22px;font-weight:600;background:#1A1A1E;color:#fff;border:1px solid #252529;transition:all .2s cubic-bezier(.4,0,.2,1);font-family:inherit;font-size:13px;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+button:hover{background:#222226;border-color:#2A2A2E}
+button:active{transform:scale(.97)}
+button:disabled{opacity:.35;cursor:not-allowed}
+button.gold{background:linear-gradient(135deg,#E8B86A 0%,#C99847 100%);color:#000;border:none;box-shadow:0 4px 20px -4px rgba(232,184,106,.45)}
+button.gold:hover{box-shadow:0 6px 28px -4px rgba(232,184,106,.55);filter:brightness(1.06)}
+button.red{background:rgba(239,68,68,.10);color:#fca5a5;border:1px solid rgba(239,68,68,.25)}
+button.red:hover{background:rgba(239,68,68,.18)}
+button.green{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.30)}
+button.green:hover{background:rgba(16,185,129,.20)}
+button.blue{background:rgba(96,165,250,.12);color:#93c5fd;border:1px solid rgba(96,165,250,.30)}
+button.blue:hover{background:rgba(96,165,250,.20)}
+button.violet{background:rgba(139,92,246,.12);color:#c4b5fd;border:1px solid rgba(139,92,246,.30)}
+button.violet:hover{background:rgba(139,92,246,.20)}
+button.sm{padding:8px 14px;font-size:11px;border-radius:10px}
+button.icon{width:40px;height:40px;padding:0;border-radius:12px}
+
+.wrap{padding:22px;max-width:1240px;margin:0 auto;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+h1{background:linear-gradient(135deg,#E8B86A 0%,#C99847 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-size:30px;font-weight:800;text-align:center;letter-spacing:-.025em;margin-bottom:6px;line-height:1.1}
+h2{font-size:24px;font-weight:700;margin-bottom:6px;letter-spacing:-.015em}
+h3{font-size:11px;font-weight:700;color:#a1a1aa;text-transform:uppercase;letter-spacing:.10em;margin-bottom:14px}
+.sub{color:#71717a;font-size:13px}
+
+.card{background:linear-gradient(180deg,rgba(20,20,23,.92) 0%,rgba(17,17,19,.96) 100%);border:1px solid rgba(36,36,40,.85);border-radius:18px;padding:20px;margin-bottom:14px;transition:border-color .25s,box-shadow .25s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.05),transparent);pointer-events:none}
+.card:hover{border-color:rgba(232,184,106,.28);box-shadow:0 8px 32px -12px rgba(0,0,0,.6)}
+.card.flat{cursor:default}
+.card.flat:hover{border-color:rgba(36,36,40,.85);box-shadow:none}
+
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;color:#a1a1aa;text-transform:uppercase;margin-bottom:8px;font-weight:700;letter-spacing:.07em}
+
+.badge{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:999px;font-size:11px;font-weight:600;border:1px solid;margin-right:6px;margin-bottom:4px}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.8}
+.b-zinc{background:#1A1A1E;color:#a1a1aa;border-color:#27272a}
+.b-blue{background:rgba(96,165,250,.12);color:#93c5fd;border-color:rgba(96,165,250,.30)}
+.b-amber{background:rgba(245,158,11,.12);color:#fbbf24;border-color:rgba(245,158,11,.30)}
+.b-green{background:rgba(16,185,129,.12);color:#6ee7b7;border-color:rgba(16,185,129,.30)}
+.b-violet{background:rgba(139,92,246,.12);color:#c4b5fd;border-color:rgba(139,92,246,.30)}
+.b-red{background:rgba(239,68,68,.15);color:#fca5a5;border-color:rgba(239,68,68,.35)}
+
+.stat-card{text-align:center;padding:18px 14px;background:linear-gradient(180deg,rgba(20,20,23,.9),rgba(17,17,19,.95));border:1px solid rgba(36,36,40,.8);border-radius:18px;transition:all .25s;position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;top:-50%;right:-50%;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(232,184,106,.10),transparent 70%);pointer-events:none}
+.stat-card .num{font-size:28px;font-weight:800;color:#E8B86A;line-height:1;margin-bottom:6px;letter-spacing:-.02em}
+.stat-card .lbl{font-size:10px;color:#71717a;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+
+.pill{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:12px;font-size:12px;font-weight:600;margin:0 6px 8px 0;cursor:pointer;border:1px solid #232326;background:#0E0E10;color:#a1a1aa;transition:all .2s;user-select:none}
+.pill:hover{color:#e4e4e7;border-color:#2A2A2E;background:#16161A}
+.pill.on{background:linear-gradient(135deg,rgba(232,184,106,.18),rgba(201,152,71,.10));color:#E8B86A;border-color:rgba(232,184,106,.45);box-shadow:0 2px 12px -2px rgba(232,184,106,.25)}
+
+/* API ROW - NEW DESIGN */
+.api-row{display:flex;gap:10px;align-items:center;margin-bottom:10px;padding:14px;background:#0E0E10;border:1px solid #1E1E22;border-radius:14px;flex-wrap:wrap;transition:border-color .2s}
+.api-row:hover{border-color:#252529}
+.api-row .api-label{font-size:12px;font-weight:700;color:#E8B86A;min-width:90px;flex-shrink:0;display:flex;align-items:center;gap:6px}
+.api-row input{flex:1;min-width:140px;padding:10px 14px;font-size:12px;border-radius:10px}
+.api-row .status{font-size:11px;font-weight:600;min-width:115px;text-align:right;flex-shrink:0;white-space:nowrap}
+
+.toggle{position:relative;width:46px;height:26px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#232326;border-radius:26px;transition:.3s}
+.slider:before{content:'';position:absolute;height:20px;width:20px;left:3px;top:3px;background:#71717a;border-radius:50%;transition:.3s}
+input:checked + .slider{background:rgba(232,184,106,.35)}
+input:checked + .slider:before{transform:translateX(20px);background:#E8B86A}
+
+.progress{height:10px;background:#1A1A1E;border-radius:5px;overflow:hidden;margin-top:14px;position:relative}
+.progress-bar{height:100%;background:linear-gradient(90deg,#E8B86A,#C99847);width:0;transition:width .4s cubic-bezier(.4,0,.2,1);border-radius:5px;position:relative}
+.progress-bar::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:shimmer 1.8s infinite}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+
+.log{background:#0A0A0C;border:1px solid #1E1E22;border-radius:14px;padding:14px;max-height:220px;overflow-y:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;color:#a1a1aa;margin-top:14px;line-height:1.75;will-change:scroll-position}
+.log div{padding:4px 0;border-bottom:1px solid #16161A;word-break:break-word}
+.log div:last-child{border:none}
+.log .ok{color:#6ee7b7}
+.log .err{color:#fca5a5}
+.log .info{color:#93c5fd}
+.log .warn{color:#fbbf24}
+
+.table-wrap{max-height:520px;overflow:auto;border:1px solid #1E1E22;border-radius:14px;margin-top:12px;background:#0A0A0C;will-change:scroll-position}
+table{width:100%;border-collapse:collapse;font-size:11px}
+table th{background:#141417;padding:12px 10px;text-align:left;font-weight:700;color:#a1a1aa;font-size:10px;text-transform:uppercase;position:sticky;top:0;z-index:2;letter-spacing:.05em;white-space:nowrap}
+table td{padding:10px;border-bottom:1px solid #1A1A1E;vertical-align:middle;word-break:break-word;font-size:11px}
+table tr:hover{background:#111113}
+table tr.selected{background:rgba(232,184,106,.06)}
+table tr.editing{background:rgba(96,165,250,.08)}
+table td input{padding:6px 8px;font-size:11px;border-radius:6px;background:#0A0A0C}
+
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:12px;background:#0A0A0C;border:1px solid #1E1E22;border-radius:14px;margin-top:12px}
+.toolbar input.search{flex:1;min-width:180px;padding:10px 14px;font-size:12px;border-radius:10px}
+.toolbar select{padding:10px 12px;font-size:11px;border-radius:10px;width:auto;min-width:120px}
+.counter{font-size:11px;color:#71717a;font-weight:600;padding:0 10px;white-space:nowrap}
+
+.chk{width:18px;height:18px;cursor:pointer;accent-color:#E8B86A}
+.empty{text-align:center;padding:50px 20px;color:#71717a;font-size:12px}
+
+.usage-row{margin-bottom:12px}
+.usage-head{display:flex;justify-content:space-between;font-size:11px;margin-bottom:6px;align-items:center}
+.usage-head .name{color:#a1a1aa;font-weight:700;letter-spacing:.02em}
+.usage-head .val{font-weight:700;font-variant-numeric:tabular-nums}
+.usage-track{height:8px;background:#1A1A1E;border-radius:4px;overflow:hidden}
+.usage-fill{height:100%;border-radius:4px;transition:width .4s cubic-bezier(.4,0,.2,1)}
+
+.screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.screen-box{max-width:440px;width:100%}
+
+/* ============ NEW MODERN TOP BAR ============ */
+.app-header{position:sticky;top:0;z-index:60;background:rgba(10,10,12,.78);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border-bottom:1px solid rgba(30,30,34,.9);padding:14px 22px}
+.app-header-inner{max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.brand{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
+.brand-logo{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#E8B86A,#C99847);display:flex;align-items:center;justify-content:center;font-weight:800;color:#000;font-size:14px;letter-spacing:-.03em;flex-shrink:0;box-shadow:0 4px 14px -2px rgba(232,184,106,.4)}
+.brand-text{min-width:0;flex:1}
+.brand-title{font-size:15px;font-weight:800;letter-spacing:-.01em;line-height:1.1;background:linear-gradient(135deg,#E8B86A,#C99847);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.brand-sub{font-size:10px;color:#71717a;font-weight:600;letter-spacing:.05em;text-transform:uppercase;margin-top:2px}
+
+/* ============ TAB NAVIGATION ============ */
+.tab-nav{position:sticky;top:67px;z-index:55;background:rgba(10,10,12,.72);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(30,30,34,.9);padding:10px 0;overflow-x:auto;scrollbar-width:none}
+.tab-nav::-webkit-scrollbar{display:none}
+.tab-nav-inner{max-width:1240px;margin:0 auto;padding:0 22px;display:flex;gap:6px;min-width:max-content}
+.tab-btn{padding:10px 18px;font-size:12px;font-weight:600;border-radius:11px;background:transparent;border:1px solid transparent;color:#71717a;cursor:pointer;white-space:nowrap;transition:all .2s;display:inline-flex;align-items:center;gap:6px;font-family:inherit}
+.tab-btn:hover{color:#e4e4e7;background:#141417}
+.tab-btn.active{color:#E8B86A;background:linear-gradient(135deg,rgba(232,184,106,.12),rgba(201,152,71,.06));border-color:rgba(232,184,106,.35)}
+.tab-btn .tab-icon{font-size:14px}
+
+.tab-pane{display:none;animation:fadeIn .3s ease}
+.tab-pane.active{display:block}
+
+/* ============ SETTINGS PANEL ============ */
+.settings-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.settings-item{padding:14px;background:#0E0E10;border:1px solid #1E1E22;border-radius:12px;cursor:pointer;transition:all .2s;text-align:left;display:flex;flex-direction:column;gap:6px}
+.settings-item:hover{border-color:rgba(232,184,106,.4);background:#141417}
+.settings-item .si-icon{font-size:20px}
+.settings-item .si-label{font-size:12px;font-weight:600;color:#e4e4e7}
+.settings-item .si-sub{font-size:10px;color:#71717a}
+
+/* ============ PAGINATION ============ */
+.pagination{display:flex;justify-content:center;align-items:center;gap:6px;padding:14px;font-size:12px;color:#a1a1aa;flex-wrap:wrap}
+.pagination button{padding:7px 14px;font-size:11px;width:auto;border-radius:10px}
+.pagination .info{padding:0 10px;font-weight:600;color:#e4e4e7;font-variant-numeric:tabular-nums}
+
+.hide{display:none !important}
+
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#232326;border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:#2F2F33}
+
+/* ============ MOBILE RESPONSIVE ============ */
+@media(max-width:600px){
+  .wrap{padding:16px}
+  .app-header{padding:12px 16px}
+  .tab-nav{top:63px}
+  .tab-nav-inner{padding:0 16px}
+  h1{font-size:24px}
+  h2{font-size:20px}
+  .grid2,.grid3{grid-template-columns:1fr}
+  .toolbar input.search{min-width:100%}
+  .toolbar select{min-width:100%}
+  table{font-size:10px}
+  table td,table th{padding:7px 6px}
+  .api-row{padding:12px}
+  .api-row .status{min-width:auto;text-align:left;width:100%;margin-top:4px}
+  .api-row .api-label{min-width:auto}
+  .pagination{gap:4px;padding:12px 8px}
+  .pagination button{padding:6px 10px;font-size:10px}
+  .brand-logo{width:34px;height:34px;font-size:13px}
+  .brand-title{font-size:14px}
+  .card{padding:16px;border-radius:16px}
+  .stat-card{padding:14px 10px}
+  .stat-card .num{font-size:22px}
+  .settings-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<!-- ==================== LOGIN SCREEN ==================== -->
+  <!-- Loading Screen (default) -->
+<div id="loadingScreen" class="screen">
+  <div class="screen-box" style="text-align:center">
+    <div class="brand-logo" style="width:56px;height:56px;font-size:20px;margin:0 auto 14px">7H</div>
+    <h1>Seven Horses</h1>
+    <p class="sub" style="margin-top:4px">Loading...</p>
+  </div>
+</div>
+  
+<div id="loginScreen" class="screen hide">
+  <div class="screen-box">
+    <div style="text-align:center;margin-bottom:24px">
+      <div class="brand-logo" style="width:56px;height:56px;font-size:20px;margin:0 auto 14px">7H</div>
+      <h1>Seven Horses</h1>
+      <p class="sub" style="margin-top:4px">Data Collector</p>
+    </div>
+    <div class="card flat">
+      <h3>Enter Password</h3>
+      <input id="loginPass" type="password" placeholder="Password" style="text-align:center;letter-spacing:4px;margin-bottom:12px" onkeydown="if(event.key==='Enter')doLogin()">
+      <button class="gold" style="width:100%;padding:14px" onclick="doLogin()">🔓 Unlock</button>
+      <div style="text-align:center;margin-top:16px">
+        <span class="sub" style="cursor:pointer;text-decoration:underline;font-size:12px" onclick="showForgot()">Forgot Password?</span>
+      </div>
+      <div id="loginError" class="sub hide" style="color:#fca5a5;text-align:center;margin-top:12px;font-size:12px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== FIRST TIME SETUP ==================== -->
+<div id="setupScreen" class="screen hide">
+  <div class="screen-box">
+    <div style="text-align:center;margin-bottom:24px">
+      <div class="brand-logo" style="width:56px;height:56px;font-size:20px;margin:0 auto 14px">7H</div>
+      <h1>Welcome</h1>
+      <p class="sub" style="margin-top:4px">First Time Setup</p>
+    </div>
+    <div class="card flat">
+      <h3>Create Your Account</h3>
+      <div class="field"><label>Password *</label><input id="setupPass1" type="password" placeholder="Min 6 characters"></div>
+      <div class="field"><label>Confirm Password *</label><input id="setupPass2" type="password" placeholder="Re-enter password"></div>
+      <div class="field"><label>Reset Email *</label><input id="setupEmail" type="email" placeholder="your@email.com"></div>
+      <div class="field"><label>Security Question *</label>
+        <select id="setupQSelect">
+          <option value="First company name?">First company name?</option>
+          <option value="First pet name?">First pet name?</option>
+          <option value="Birth city?">Birth city?</option>
+          <option value="Favorite teacher name?">Favorite teacher name?</option>
+          <option value="Mother's maiden name?">Mother's maiden name?</option>
+        </select>
+      </div>
+      <div class="field"><label>Security Answer *</label><input id="setupAnswer" placeholder="Your answer"></div>
+      <button class="gold" style="width:100%;padding:14px" onclick="doSetup()">Create Account</button>
+      <div id="setupError" class="sub hide" style="color:#fca5a5;text-align:center;margin-top:12px;font-size:12px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== FORGOT PASSWORD ==================== -->
+<div id="forgotScreen" class="screen hide">
+  <div class="screen-box">
+    <div style="text-align:center;margin-bottom:24px">
+      <div class="brand-logo" style="width:56px;height:56px;font-size:20px;margin:0 auto 14px">🔐</div>
+      <h1>Reset Password</h1>
+      <p class="sub" style="margin-top:4px">Verify your identity</p>
+    </div>
+
+    <div class="card flat" id="forgotStep1">
+      <h3>Step 1 — Security Check</h3>
+      <div class="field"><label>Registered Email</label><input id="fgtEmail" type="email" placeholder="your@email.com"></div>
+      <div class="field"><label id="fgtQLabel">Security Question</label><input id="fgtAnswer" placeholder="Your answer"></div>
+      <button class="gold" style="width:100%;padding:14px" onclick="sendResetCode()">Send Reset Code</button>
+      <div id="forgotError" class="sub hide" style="color:#fca5a5;text-align:center;margin-top:12px;font-size:12px"></div>
+    </div>
+
+    <div class="card flat hide" id="forgotStep2">
+      <h3>Step 2 — Verify Code</h3>
+      <p class="sub" style="font-size:12px;margin-bottom:12px">A 6-digit code has been sent to your email. Valid for: <b id="fgtTimer" style="color:#E8B86A">15:00</b></p>
+      <div class="field"><label>Enter Code</label><input id="fgtCode" type="tel" maxlength="6" placeholder="000000" style="text-align:center;font-size:22px;letter-spacing:8px;font-weight:700" onkeydown="if(event.key==='Enter')verifyResetCode()"></div>
+      <button class="gold" style="width:100%;padding:14px" onclick="verifyResetCode()">Verify Code</button>
+      <div id="forgotError2" class="sub hide" style="color:#fca5a5;text-align:center;margin-top:12px;font-size:12px"></div>
+    </div>
+
+    <div class="card flat hide" id="forgotStep3">
+      <h3>Step 3 — New Password</h3>
+      <div class="field"><label>New Password *</label><input id="fgtNew1" type="password" placeholder="Min 6 characters"></div>
+      <div class="field"><label>Confirm Password *</label><input id="fgtNew2" type="password" placeholder="Re-enter password"></div>
+      <button class="gold" style="width:100%;padding:14px" onclick="resetPassword()">Reset Password</button>
+      <div id="forgotError3" class="sub hide" style="color:#fca5a5;text-align:center;margin-top:12px;font-size:12px"></div>
+    </div>
+
+    <div style="text-align:center;margin-top:16px">
+      <span class="sub" style="cursor:pointer;text-decoration:underline;font-size:12px" onclick="backToLogin()">← Back to Login</span>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MAIN APP ==================== -->
+<div id="mainApp" class="hide">
+
+  <!-- Top Bar -->
+  <div class="app-header">
+    <div class="app-header-inner">
+      <div class="brand">
+        <div class="brand-logo">7H</div>
+        <div class="brand-text">
+          <div class="brand-title">Seven Horses</div>
+          <div class="brand-sub">Data Collector</div>
+        </div>
+      </div>
+      <button class="icon-btn" onclick="lockApp()" title="Lock">🔒</button>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="tab-nav">
+    <div class="tab-nav-inner">
+      <button class="tab-btn active" data-tab="home" onclick="switchTab('home')"><span class="tab-icon">🏠</span> Home</button>
+<button class="tab-btn" data-tab="search" onclick="switchTab('search')"><span class="tab-icon">🔍</span> Search</button>
+<button class="tab-btn" data-tab="results" onclick="switchTab('results')"><span class="tab-icon">📋</span> Results</button>
+<button class="tab-btn" data-tab="enrich" onclick="switchTab('enrich')"><span class="tab-icon">📤</span> Enrich</button>
+<button class="tab-btn" data-tab="keys" onclick="switchTab('keys')"><span class="tab-icon">🔑</span> API Keys</button>
+<button class="tab-btn" data-tab="settings" onclick="switchTab('settings')"><span class="tab-icon">⚙️</span> Settings</button>
+    </div>
+  </div>
+  <div class="wrap">
+
+    <!-- ============ TAB: HOME ============ -->
+    <div class="tab-pane active" id="pane-home">
+      <div class="card flat">
+        <h3>📊 Monthly Usage</h3>
+        <div id="usagePanel"></div>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid #1A1A1E;font-size:11px;color:#71717a;text-align:center" id="resetCountdown">
+          ⏰ Reset in: calculating...
+        </div>
+      </div>
+      
+      <div class="card flat">
+  <h3>🗂️ Master List</h3>
+  <p class="sub" style="font-size:12px;margin-bottom:12px">All companies collected across all searches</p>
+  <div id="masterStats">
+    <div class="sub" style="text-align:center;padding:12px">Loading...</div>
+  </div>
+</div>
+
+<div class="card flat">
+  <h3>📅 Search History</h3>
+  <p class="sub" style="font-size:12px;margin-bottom:12px">Recent searches with date & time</p>
+  <div id="searchHistory">
+    <div class="sub" style="text-align:center;padding:12px">Loading...</div>
+  </div>
+</div>
+
+      <div class="grid3" style="margin-top:14px;margin-bottom:14px">
+        <div class="stat-card"><div class="num" id="statTotal">0</div><div class="lbl">Total</div></div>
+        <div class="stat-card"><div class="num" id="statUnique">0</div><div class="lbl">Unique</div></div>
+        <div class="stat-card"><div class="num" id="statSkipped">0</div><div class="lbl">Skipped</div></div>
+      </div>
+
+      <div class="card flat">
+        <h3>🎯 Priority Order (Highest Limit First)</h3>
+        <p class="sub" style="font-size:12px;margin-bottom:12px">Sources are tried in this order. When one is exhausted, the next one starts automatically.</p>
+        <div id="priorityOrder"></div>
+      </div>
+    </div>
+
+    <!-- ============ TAB: API KEYS ============ -->
+    <div class="tab-pane" id="pane-keys">
+      <div class="card flat">
+        <h3>🔑 API Keys</h3>
+        <p class="sub" style="font-size:12px;margin-bottom:14px">Keys are saved automatically in your browser. Enter once and forget.</p>
+
+        <div class="api-row">
+          <div class="api-label">🔷 Apify</div>
+          <input id="key_apify" type="password" placeholder="apify_api_..." oninput="saveKey('apify',this.value)">
+          <button class="blue sm" onclick="testKey('apify')">Test</button>
+          <div class="status" id="st_apify">⚫ Not set</div>
+          <label class="toggle"><input type="checkbox" id="tg_apify" onchange="saveToggle('apify',this.checked)"><span class="slider"></span></label>
+        </div>
+
+        <div class="api-row">
+          <div class="api-label">🟢 Google Places</div>
+          <input id="key_gplaces" type="password" placeholder="AIza..." oninput="saveKey('gplaces',this.value)">
+          <button class="blue sm" onclick="testKey('gplaces')">Test</button>
+          <div class="status" id="st_gplaces">⚫ Not set</div>
+          <label class="toggle"><input type="checkbox" id="tg_gplaces" onchange="saveToggle('gplaces',this.checked)"><span class="slider"></span></label>
+        </div>
+
+        <div class="api-row">
+          <div class="api-label">🟣 SerpAPI</div>
+          <input id="key_serp" type="password" placeholder="SerpAPI key" oninput="saveKey('serp',this.value)">
+          <button class="blue sm" onclick="testKey('serp')">Test</button>
+          <div class="status" id="st_serp">⚫ Not set</div>
+          <label class="toggle"><input type="checkbox" id="tg_serp" onchange="saveToggle('serp',this.checked)"><span class="slider"></span></label>
+        </div>
+
+        <div class="api-row">
+          <div class="api-label">🟡 Apollo</div>
+          <input id="key_apollo" type="password" placeholder="Apollo API key" oninput="saveKey('apollo',this.value)">
+          <button class="blue sm" onclick="testKey('apollo')">Test</button>
+          <div class="status" id="st_apollo">⚫ Not set</div>
+          <label class="toggle"><input type="checkbox" id="tg_apollo" onchange="saveToggle('apollo',this.checked)"><span class="slider"></span></label>
+        </div>
+      </div>
+<div class="api-row">
+  <div class="api-label">🟠 Hunter</div>
+  <input id="key_hunter" type="password" placeholder="Hunter.io API key" oninput="saveKey('hunter',this.value)">
+  <button class="blue sm" onclick="testKey('hunter')">Test</button>
+  <div class="status" id="st_hunter">⚫ Not set</div>
+  <label class="toggle"><input type="checkbox" id="tg_hunter" onchange="saveToggle('hunter',this.checked)"><span class="slider"></span></label>
+</div>
+
+      <div class="card flat" style="border-color:rgba(96,165,250,.3)">
+        <h3>💡 Where to Get API Keys</h3>
+        <div style="font-size:12px;color:#a1a1aa;line-height:1.9">
+          <b style="color:#E8B86A">Apify:</b> console.apify.com → Settings → Integrations → Create Token<br>
+          <b style="color:#6ee7b7">Google Places:</b> console.cloud.google.com → Enable Places API → Create Key<br>
+          <b style="color:#c4b5fd">SerpAPI:</b> serpapi.com → Dashboard → API Key<br>
+          <b style="color:#fbbf24">Apollo:</b> app.apollo.io → Settings → API Keys
+          <br><b style="color:#fb923c">Hunter:</b> hunter.io → Dashboard → API Key
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ TAB: SEARCH ============ -->
+    <div class="tab-pane" id="pane-search">
+      <div class="card flat">
+  <h3>🔍 Search Setup</h3>
+
+  <div class="grid2">
+    <div class="field"><label>Industry</label><input id="in_industry" value="IT company" placeholder="e.g. IT company" oninput="renderQuerySuggestions()"></div>
+    <div class="field"><label>City</label><input id="in_city" value="Gurgaon" placeholder="e.g. Gurgaon" oninput="renderQuerySuggestions()"></div>
+  </div>
+  <div class="grid2">
+    <div class="field"><label>Total Companies Needed</label><input id="in_count" type="number" value="50" min="10" max="1000"></div>
+    <div class="field"><label>Max Per Source</label><input id="in_max" type="number" value="50" min="10" max="200"></div>
+  </div>
+
+        <div class="field" style="margin-top:12px">
+  <label>⚡ Smart Enrichment (Optional)</label>
+  <div style="padding:14px;background:#0E0E10;border:1px solid #1E1E22;border-radius:12px">
+    <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+      <input type="checkbox" id="smartEnrichToggle" onchange="toggleSmartEnrich(this.checked)" style="width:20px;height:20px;flex-shrink:0">
+      <div>
+        <div style="font-size:13px;font-weight:600;color:#e4e4e7">Enable Auto-Complete</div>
+        <div style="font-size:10px;color:#71717a;margin-top:2px">Fill missing fields (Email, Contact, Employees) using Apollo + Hunter + Apify</div>
+      </div>
+    </label>
+  </div>
+</div>
+
+<!-- Recent Search Warning -->
+<div id="recentSearchWarning"></div>
+
+<!-- Query Suggestions -->
+<div id="querySuggestions" style="margin-top:8px"></div>
+
+  <div style="margin-top:16px;padding-top:16px;border-top:1px solid #1A1A1E">
+    <h3 style="margin-bottom:14px">🎯 Company Filters (Optional)</h3>
+
+    <div class="grid2">
+      <div class="field">
+        <label>Company Size (Employees)</label>
+        <select id="f_size">
+          <option value="">Any Size</option>
+          <option value="1,10">1 – 10</option>
+          <option value="10,50">10 – 50</option>
+          <option value="50,200">50 – 200</option>
+          <option value="200,500">200 – 500</option>
+          <option value="500,1000">500 – 1,000</option>
+          <option value="1000,5000">1,000 – 5,000</option>
+          <option value="5000,100000">5,000+</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Minimum Rating</label>
+        <select id="f_rating">
+          <option value="">Any Rating</option>
+          <option value="3">3.0+</option>
+          <option value="3.5">3.5+</option>
+          <option value="4">4.0+</option>
+          <option value="4.5">4.5+</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>✅ Must Have (Skip if missing)</label>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;padding:12px;background:#0E0E10;border:1px solid #1E1E22;border-radius:12px">
+        <label style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#e4e4e7;cursor:pointer;text-transform:none;letter-spacing:0;font-weight:500">
+          <input type="checkbox" class="chk" id="f_req_phone" style="width:16px;height:16px"> Phone
+        </label>
+        <label style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#e4e4e7;cursor:pointer;text-transform:none;letter-spacing:0;font-weight:500">
+          <input type="checkbox" class="chk" id="f_req_email" style="width:16px;height:16px"> Email
+        </label>
+        <label style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#e4e4e7;cursor:pointer;text-transform:none;letter-spacing:0;font-weight:500">
+          <input type="checkbox" class="chk" id="f_req_website" style="width:16px;height:16px"> Website
+        </label>
+        <label style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#e4e4e7;cursor:pointer;text-transform:none;letter-spacing:0;font-weight:500">
+          <input type="checkbox" class="chk" id="f_req_address" style="width:16px;height:16px"> Address
+        </label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>✅ Include Keywords (comma separated)</label>
+      <input id="f_include" placeholder="e.g. manufacturing, production">
+      <div class="sub" style="font-size:10px;margin-top:4px">Company must match at least one keyword</div>
+    </div>
+
+    <div class="field">
+      <label>🚫 Exclude Keywords (comma separated)</label>
+      <input id="f_exclude" placeholder="e.g. staffing, consultancy, BPO">
+      <div class="sub" style="font-size:10px;margin-top:4px">Company will be skipped if any keyword matches</div>
+    </div>
+  </div>
+
+  <div class="field" style="margin-top:16px">
+    <label>📋 Fields to Collect</label>
+    <div class="row">
+      <span class="pill on" data-preset="standard" onclick="selectPreset('standard')">Standard (7)</span>
+      <span class="pill" data-preset="extended" onclick="selectPreset('extended')">Extended (12)</span>
+      <span class="pill" data-preset="crm" onclick="selectPreset('crm')">CRM-Ready (6)</span>
+      <span class="pill" data-preset="custom" onclick="selectPreset('custom')">Custom</span>
+    </div>
+  </div>
+
+  <div id="customFields" class="hide" style="padding:14px;background:#0A0A0C;border-radius:14px;border:1px solid #1E1E22;margin-bottom:14px">
+    <h3 style="margin-bottom:10px">Select Fields</h3>
+    <div id="customFieldsList" class="row"></div>
+  </div>
+
+  <div class="row" style="margin-top:16px">
+    <button class="gold" style="flex:1;padding:14px;font-size:14px" id="btn_start" onclick="startCollection()">▶ Start Collection</button>
+    <button class="red" style="padding:14px 20px" onclick="stopCollection()">⏹ Stop</button>
+  </div>
+      </div>
+
+      <div class="card flat hide" id="progressCard">
+        <h3>📊 Collection Progress</h3>
+        <div id="progressText" class="sub" style="text-align:left;margin-bottom:8px">Starting...</div>
+        <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+        <div class="log" id="logBox"></div>
+      </div>
+    </div>
+
+    <!-- ============ TAB: RESULTS ============ -->
+    <div class="tab-pane" id="pane-results">
+      <div class="card flat" id="resultCard">
+        <h3>📋 Review & Export</h3>
+
+        <div class="toolbar">
+          <input type="text" class="search" id="searchBox" placeholder="🔍 Search companies..." oninput="debouncedFilter()">
+          <select id="filterSource" onchange="applyFilter()">
+            <option value="">All Sources</option>
+            <option value="apify">Apify</option>
+            <option value="gplaces">Google Places</option>
+            <option value="serp">SerpAPI</option>
+            <option value="apollo">Apollo</option>
+            <option value="manual">Manual</option>
+          </select>
+          <select id="sortBy" onchange="applyFilter()">
+            <option value="">Sort: Default</option>
+            <option value="name">Name A-Z</option>
+            <option value="loc">Location</option>
+            <option value="emp">Employees ↓</option>
+          </select>
+          <span class="counter" id="counter">0 of 0</span>
+        </div>
+
+        <div class="toolbar">
+          <button class="red sm" onclick="deleteSelected()">🗑 Delete Selected</button>
+          <button class="red sm" onclick="deleteAll()">🗑 Delete All</button>
+          <button class="green sm" onclick="exportCSV()">📥 CSV</button>
+          <button class="blue sm" onclick="exportExcel()">📊 Excel</button>
+          <button class="gold sm" onclick="exportSelectedCSV()">📥 Selected</button>
+          <button class="violet sm" onclick="openManualAdd()">➕ Add Manual</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:32px"><input type="checkbox" class="chk" id="chkAll" onchange="toggleSelectAll(this.checked)"></th>
+                <th>Company</th><th>Contact</th><th>Email</th><th>Phone</th><th>Location</th><th>Address</th><th>Emp</th><th>Source</th><th style="width:90px">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="resultBody"></tbody>
+          </table>
+          <div class="empty" id="emptyMsg" style="display:none">No results yet. Go to Search tab and start collection.</div>
+        </div>
+
+        <div class="pagination" id="pagination"></div>
+      </div>
+    </div>
+
+    <!-- ============ TAB: SETTINGS ============ -->
+    <div class="tab-pane" id="pane-settings">
+      <div class="card flat">
+        <h3>⚙️ Settings</h3>
+        <div class="settings-grid">
+          <button class="settings-item" onclick="openModal('changePass')">
+            <div class="si-icon">🔐</div>
+            <div class="si-label">Change Password</div>
+            <div class="si-sub">Update login password</div>
+          </button>
+          <button class="settings-item" onclick="openModal('emailConfig')">
+            <div class="si-icon">📧</div>
+            <div class="si-label">Email Config</div>
+            <div class="si-sub">EmailJS setup for reset</div>
+          </button>
+          <button class="settings-item" onclick="openModal('securityQ')">
+            <div class="si-icon">❓</div>
+            <div class="si-label">Security Question</div>
+            <div class="si-sub">Change question & answer</div>
+          </button>
+          <button class="settings-item" onclick="openModal('exportKeys')">
+            <div class="si-icon">💾</div>
+            <div class="si-label">Export Keys</div>
+            <div class="si-sub">Backup API keys</div>
+          </button>
+          <button class="settings-item" onclick="openModal('importKeys')">
+            <div class="si-icon">📥</div>
+            <div class="si-label">Import Keys</div>
+            <div class="si-sub">Restore from backup</div>
+          </button>
+          <button class="settings-item" onclick="resetEverything()" style="border-color:rgba(239,68,68,.3)">
+            <div class="si-icon">⚠️</div>
+            <div class="si-label" style="color:#fca5a5">Reset All Data</div>
+            <div class="si-sub">Clear everything</div>
+          </button>
+          <button class="settings-item" id="installCard" onclick="installApp()" style="display:none;border-color:rgba(232,184,106,.4)">   <div class="si-icon">📱</div>   <div class="si-label">Install App</div>   <div class="si-sub">Add to home screen</div> </button>
+          
+          <button class="settings-item" onclick="shareApp()" style="border-color:rgba(96,165,250,.4)">
+  <div class="si-icon">📤</div>
+  <div class="si-label">Share App</div>
+  <div class="si-sub">Send link to team</div>
+</button>
+<button class="settings-item" onclick="showQRCode()" style="border-color:rgba(139,92,246,.4)">
+  <div class="si-icon">📱</div>
+  <div class="si-label">QR Code</div>
+  <div class="si-sub">Scan to install</div>
+</button>
+        </div>
+      </div>
+
+      <div class="card flat">
+        <h3>ℹ️ About</h3>
+        <div class="kv" style="display:flex;justify-content:space-between;padding:10px 0;font-size:13px;border-bottom:1px solid #1A1A1E">
+          <span style="color:#71717a">Version</span><span style="color:#e4e4e7;font-weight:600">1.0.0</span>
+        </div>
+        <div class="kv" style="display:flex;justify-content:space-between;padding:10px 0;font-size:13px">
+          <span style="color:#71717a">App</span><span style="color:#e4e4e7;font-weight:600">Seven Horses Data Collector</span>
+        </div>
+      </div>
+    </div>
+
+<!-- ============ TAB: ENRICH ============ -->
+<div class="tab-pane" id="pane-enrich">
+  <div class="card flat">
+    <h3>📤 Data Enrichment</h3>
+    <p class="sub" style="font-size:12px;margin-bottom:16px">Upload a file with partial company data. The tool will find missing fields automatically.</p>
+
+    <div class="field">
+      <label>Upload File (CSV / Excel / TXT)</label>
+      <div style="padding:24px;border:2px dashed #232326;border-radius:14px;background:#0A0A0C;text-align:center;cursor:pointer;transition:all .2s" onclick="document.getElementById('enrichFile').click()" onmouseover="this.style.borderColor='rgba(232,184,106,.4)'" onmouseout="this.style.borderColor='#232326'">
+        <div style="font-size:32px;margin-bottom:8px">📁</div>
+        <div style="font-size:13px;font-weight:600;color:#e4e4e7;margin-bottom:4px">Click to choose file</div>
+        <div style="font-size:11px;color:#71717a">CSV, Excel (.xlsx), or TXT — max 5MB</div>
+        <input type="file" id="enrichFile" accept=".csv,.xlsx,.xls,.txt" style="display:none" onchange="handleEnrichFile(event)">
+      </div>
+      <div id="enrichFileInfo" class="sub" style="font-size:11px;margin-top:8px;text-align:center"></div>
+    </div>
+
+    <div class="field">
+      <label>Matching Priority (Higher = Safer Match)</label>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:12px;background:#0E0E10;border:1px solid #1E1E22;border-radius:12px">
+        <div style="font-size:11px;color:#a1a1aa;font-weight:600">1. Website Domain</div>
+        <div style="font-size:11px;color:#a1a1aa;font-weight:600">2. Phone Number</div>
+        <div style="font-size:11px;color:#a1a1aa;font-weight:600">3. Email Domain</div>
+        <div style="font-size:11px;color:#a1a1aa;font-weight:600">4. Company Name (exact)</div>
+        <div style="font-size:11px;color:#a1a1aa;font-weight:600">5. City / Location</div>
+        <div style="font-size:11px;color:#a1a1aa;font-weight:600">6. Address</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Match Score Threshold</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span class="pill on" data-threshold="80" onclick="selectThreshold(80)">80+ (Recommended)</span>
+        <span class="pill" data-threshold="70" onclick="selectThreshold(70)">70+ (Medium)</span>
+        <span class="pill" data-threshold="60" onclick="selectThreshold(60)">60+ (Loose)</span>
+      </div>
+      <div class="sub" style="font-size:10px;margin-top:6px">Rows below threshold will be rejected</div>
+    </div>
+
+    <div class="row" style="margin-top:16px">
+      <button class="gold" style="flex:1;padding:14px;font-size:14px" id="btn_enrich" onclick="startEnrichment()" disabled>▶ Start Enrichment</button>
+      <button class="red" style="padding:14px 20px" onclick="stopEnrichment()">⏹ Stop</button>
+    </div>
+  </div>
+
+  <!-- Enrichment Progress -->
+  <div class="card flat hide" id="enrichProgressCard">
+    <h3>📊 Enrichment Progress</h3>
+    <div id="enrichProgressText" class="sub" style="text-align:left;margin-bottom:8px">Starting...</div>
+    <div class="progress"><div class="progress-bar" id="enrichProgressBar"></div></div>
+    <div class="log" id="enrichLogBox"></div>
+    <div class="grid3" style="margin-top:12px">
+      <div class="stat-card"><div class="num" id="enrichStatTotal">0</div><div class="lbl">Total</div></div>
+      <div class="stat-card"><div class="num" id="enrichStatMatched">0</div><div class="lbl">Matched</div></div>
+      <div class="stat-card"><div class="num" id="enrichStatRejected">0</div><div class="lbl">Rejected</div></div>
+    </div>
+  </div>
+
+  <!-- Enrichment Results -->
+  <div class="card flat hide" id="enrichResultCard">
+    <h3>📋 Enriched Results</h3>
+
+    <div class="toolbar">
+      <input type="text" class="search" id="enrichSearchBox" placeholder="🔍 Filter..." oninput="debouncedEnrichFilter()">
+      <select id="enrichFilterStatus" onchange="applyEnrichFilter()" style="width:auto;padding:8px;font-size:11px">
+        <option value="">All Rows</option>
+        <option value="matched">✅ Matched</option>
+        <option value="rejected">❌ Rejected</option>
+      </select>
+      <span class="counter" id="enrichCounter">0 of 0</span>
+    </div>
+
+    <div class="toolbar">
+      <button class="green sm" onclick="exportEnrichedCSV()">📥 CSV</button>
+      <button class="blue sm" onclick="exportEnrichedExcel()">📊 Excel</button>
+      <button class="violet sm" onclick="exportRejectedCSV()">📥 Rejected Only</button>
+      <button onclick="clearEnrichment()">🗑 Clear</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Status</th><th>Score</th><th>Company</th><th>Contact</th><th>Email</th><th>Phone</th><th>Location</th><th>Employees</th><th>Industry</th>
+          </tr>
+        </thead>
+        <tbody id="enrichResultBody"></tbody>
+      </table>
+      <div class="empty" id="enrichEmptyMsg" style="display:none">No enrichment results yet.</div>
+    </div>
+
+    <div class="pagination" id="enrichPagination"></div>
+  </div>
+</div>
+  </div><!-- /wrap -->
+</div><!-- /mainApp -->
+
+<!-- ==================== MODAL CONTAINER ==================== -->
+<div id="modalBg" class="hide" style="position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:200;display:flex;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto" onclick="if(event.target===this)closeModal()">
+  <div id="modalContent" style="background:#0E0E10;border:1px solid #1E1E22;border-radius:22px;padding:26px;width:100%;max-width:560px;margin-top:20px;margin-bottom:20px;box-shadow:0 30px 80px -20px rgba(0,0,0,.9);animation:modalIn .25s cubic-bezier(.4,0,.2,1)"></div>
+</div>
+
+<style>
+@keyframes modalIn{from{opacity:0;transform:translateY(20px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+</style>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+// ==================== GLOBAL STATE ====================
+var STATE = {
+  loggedIn: false,
+  keys: {},
+  toggles: {},
+  auth: null,
+  usage: null,
+  emailConfig: null,
+  results: [],
+  selected: {},
+  editingIdx: null,
+  stopped: false,
+  preset: 'standard',
+  currentPage: 1,
+  perPage: 50,
+  resetCode: null,
+  resetAttempts: 0,
+  debounceTimer: null,
+  currentTab: 'home',
+smartEnrich: false
+};
+
+// ==================== WORKER API ====================
+var WORKER_URL = 'https://seven-horses-proxy.sevenhorsescrm.workers.dev';
+var CORS_PROXY = WORKER_URL; // Alias for backward compatibility
+  
+// ==================== FIREBASE INIT ====================
+var firebaseConfig = {
+  apiKey: "AIzaSyC0_uPBho9ZBW--FN_ZdxoRpmp1RukiwKM",
+  authDomain: "seven-horses-crm.firebaseapp.com",
+  projectId: "seven-horses-crm",
+  storageBucket: "seven-horses-crm.firebasestorage.app",
+  messagingSenderId: "139462163814",
+  appId: "1:139462163814:web:80de588cafc645a159dca7"
+};
+
+var fbApp = null;
+var fbDb = null;
+var fbReady = false;
+
+try {
+  if(typeof firebase !== 'undefined'){
+    fbApp = firebase.initializeApp(firebaseConfig);
+    fbDb = firebase.firestore();
+    fbReady = true;
+    console.log('✅ Firebase connected');
+  } else {
+    console.warn('⚠️ Firebase SDK not loaded');
+  }
+} catch(e) {
+  console.error('❌ Firebase failed:', e);
+  }
+var PRESETS = {
+  standard: ['company','contact','email','phone','location','address','website'],
+  extended: ['company','contact','email','phone','location','address','website','employees','industry','rating','category','founded'],
+  crm: ['company','contact','email','phone','location','address'],
+  custom: []
+};
+var ALL_FIELDS = [
+  {id:'company',label:'Company Name'},{id:'contact',label:'Contact Person'},
+  {id:'email',label:'Email'},{id:'phone',label:'Phone'},
+  {id:'location',label:'Location'},{id:'address',label:'Address'},
+  {id:'website',label:'Website'},{id:'employees',label:'Employees'},
+  {id:'industry',label:'Industry'},{id:'rating',label:'Rating'},
+  {id:'category',label:'Category'},{id:'founded',label:'Founded Year'}
+];
+
+// ==================== STORAGE ====================
+function lsGet(k, def){
+  try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch(e){ return def; }
+}
+function lsSet(k, v){
+  try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){ console.warn('Storage full:', e); }
+}
+
+// ==================== SHA-256 ====================
+async function sha256(str){
+  var buf = new TextEncoder().encode(str);
+  var hash = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(hash)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+}
+
+// ==================== SCREEN SWITCH ====================
+function show(id){
+  ['loginScreen', 'setupScreen', 'forgotScreen', 'mainApp', 'loadingScreen'].forEach(function(s){
+    var el = document.getElementById(s);
+    if(el) el.classList.add('hide');
+  });
+  var target = document.getElementById(id);
+  if(target) target.classList.remove('hide');
+}
+
+function showMain(){
+  // Push initial history state for back button
+try {
+  window.history.pushState({ page: 'app', tab: 'home' }, '', location.href);
+} catch(e){}
+
+  show('mainApp');
+  loadKeysToUI();
+  loadTogglesToUI();
+  loadSmartEnrichToggle();
+  renderUsage();
+  renderCustomFieldsList();
+  updateResetCountdown();
+  renderPriorityOrder();
+  renderTab('home');
+  renderMasterStats();
+  renderSearchHistory();
+  renderQuerySuggestions();
+}
+
+// ==================== SMART ENRICH TOGGLE LOADER ====================
+function loadSmartEnrichToggle(){
+  var saved = lsGet('sh_col_smartenrich', false);
+  STATE.smartEnrich = saved;
+  var toggle = document.getElementById('smartEnrichToggle');
+  if(toggle) toggle.checked = saved;
+}
+  
+// ==================== TAB SWITCHING ====================
+function switchTab(tabName){
+  STATE.currentTab = tabName;
+  // Push history entry for back button
+if(tabName !== 'home'){
+  try {
+    window.history.pushState({ page: 'app', tab: tabName }, '', location.href);
+  } catch(e){}
+  }
+  renderTab(tabName);
+}
+
+function renderTab(tabName){
+  document.querySelectorAll('.tab-btn').forEach(function(b){
+    b.classList.toggle('active', b.getAttribute('data-tab') === tabName);
+  });
+  document.querySelectorAll('.tab-pane').forEach(function(p){
+    p.classList.remove('active');
+  });
+  var pane = document.getElementById('pane-' + tabName);
+  if(pane) pane.classList.add('active');
+
+  // If results tab, render results
+  if(tabName === 'results' && typeof renderResults === 'function'){
+    renderResults();
+  }
+  // If keys tab, refresh status
+  if(tabName === 'keys'){
+    ['apify','gplaces','serp','apollo','hunter'].forEach(function(k){
+      var st = document.getElementById('st_' + k);
+      if(st && !hasKey(k)){ st.innerHTML = '⚫ Not set'; st.style.color = '#71717a'; }
+    });
+  }
+  
+// If enrich tab, render enrichment results
+if(tabName === 'enrich' && typeof renderEnrichResults === 'function'){
+  if(STATE.enrich.results.length > 0){
+    renderEnrichResults();
+  }
+}
+
+// If home tab, refresh master stats
+if(tabName === 'home' && typeof renderMasterStats === 'function'){
+  renderMasterStats();
+  renderSearchHistory();
+}
+  
+// If search tab, load query suggestions
+if(tabName === 'search' && typeof renderQuerySuggestions === 'function'){
+  setTimeout(renderQuerySuggestions, 100);
+}
+}
+
+// ==================== BOOT ====================
+async function boot(){
+  STATE.auth = lsGet('sh_col_auth', null);
+  STATE.keys = lsGet('sh_col_keys', {});
+  STATE.toggles = lsGet('sh_col_toggles', {apify:true, gplaces:true});
+  STATE.emailConfig = lsGet('sh_col_email', null);
+  initUsage();
+  
+// Load keys from Firebase (async, non-blocking)
+loadKeysFromFirebase();
+
+  // Check session (valid for 30 days)
+var session = lsGet('sh_col_session', null);
+var sessionValid = false;
+
+if(session && session.loggedIn && session.timestamp){
+  var daysSince = (Date.now() - session.timestamp) / (24 * 60 * 60 * 1000);
+  if(daysSince < 30){
+    sessionValid = true;
+  } else {
+    localStorage.removeItem('sh_col_session');
+  }
+}
+
+// If no local auth, try loading from Firebase
+if(!STATE.auth && fbReady && fbDb){
+  try {
+    var fbAuth = await loadAuthFromFirebase();
+    if(fbAuth && fbAuth.passHash){
+      STATE.auth = fbAuth;
+      lsSet('sh_col_auth', STATE.auth);
+      console.log('✅ Auth loaded from Firebase');
+    }
+  } catch(e){
+    console.warn('Auth fetch failed:', e.message);
+  }
+}
+
+if(!STATE.auth || !STATE.auth.passHash){
+  show('setupScreen');
+} else if(sessionValid){
+  STATE.loggedIn = true;
+  showMain();
+} else {
+  show('loginScreen');
+  }
+}
+
+// ==================== FIREBASE: LOAD KEYS ====================
+async function loadKeysFromFirebase(){
+  if(!fbReady || !fbDb){
+    console.warn('⚠️ Firebase not ready — using local keys only');
+    return;
+  }
+  try {
+    var doc = await fbDb.collection('collector_config').doc('api_keys').get();
+    if(!doc.exists){
+      console.warn('⚠️ No keys found in Firebase');
+      return;
+    }
+    var data = doc.data();
+    var updated = false;
+
+    ['apify','gplaces','serp','apollo','hunter'].forEach(function(k){
+      if(data[k] && data[k] !== 'placeholder' && data[k] !== STATE.keys[k]){
+        STATE.keys[k] = data[k];
+        updated = true;
+      }
+    });
+
+    if(updated){
+      lsSet('sh_col_keys', STATE.keys);
+      loadKeysToUI();
+      console.log('✅ Keys loaded from Firebase');
+    } else {
+      console.log('ℹ️ Local keys are up to date');
+    }
+  } catch(e){
+    console.error('❌ Firebase load failed:', e.message);
+  }
+}
+  
+// ==================== FIREBASE: SAVE AUTH ====================
+async function saveAuthToFirebase(){
+  if(!fbReady || !fbDb) return;
+  if(!STATE.auth) return;
+  try {
+    await fbDb.collection('collector_config').doc('auth').set({
+      passHash: STATE.auth.passHash,
+      email: STATE.auth.email,
+      question: STATE.auth.question,
+      answerHash: STATE.auth.answerHash,
+      passHistory: STATE.auth.passHistory || [],
+      createdAt: STATE.auth.createdAt || Date.now(),
+      updatedAt: Date.now()
+    }, { merge: true });
+    console.log('✅ Auth synced to Firebase');
+  } catch(e){
+    console.warn('⚠️ Auth save failed:', e.message);
+  }
+}
+
+// ==================== FIREBASE: LOAD AUTH ====================
+async function loadAuthFromFirebase(){
+  if(!fbReady || !fbDb) return null;
+  try {
+    var doc = await fbDb.collection('collector_config').doc('auth').get();
+    if(doc.exists){
+      return doc.data();
+    }
+    return null;
+  } catch(e){
+    console.warn('⚠️ Auth load failed:', e.message);
+    return null;
+  }
+}
+
+// ==================== MASTER LIST ====================
+async function isCompanyInMaster(normalizedName){
+  if(!fbReady || !fbDb) return false;
+  try {
+    var snap = await fbDb.collection('collector_master')
+      .where('normalized', '==', normalizedName)
+      .limit(1)
+      .get();
+    return !snap.empty;
+  } catch(e){
+    console.warn('Master check failed:', e.message);
+    return false;
+  }
+}
+
+async function addToMasterList(company){
+  if(!fbReady || !fbDb) return false;
+  try {
+    var now = Date.now();
+    var monthKey = new Date().toISOString().slice(0, 7); // "2026-09"
+
+    var docId = 'c_' + now + '_' + Math.floor(Math.random() * 99999);
+
+    await fbDb.collection('collector_master').doc(docId).set({
+      company: company.company || '',
+      normalized: normalizeName(company.company || ''),
+      contact: company.contact || '',
+      email: company.email || '',
+      phone: company.phone || '',
+      location: company.location || '',
+      address: company.address || '',
+      website: company.website || '',
+      employees: company.employees || '',
+      industry: company.industry || '',
+      rating: company.rating || '',
+      category: company.category || '',
+      founded: company.founded || '',
+      source: company.source || 'unknown',
+      addedAt: now,
+      addedMonth: monthKey,
+      enriched: false
+    });
+    return true;
+  } catch(e){
+    console.error('Master add failed:', e.message);
+    return false;
+  }
+}
+
+async function saveResultsToMaster(results){
+  if(!fbReady || !fbDb) return { saved: 0, skipped: 0 };
+  if(!results || results.length === 0) return { saved: 0, skipped: 0 };
+
+  var saved = 0, skipped = 0;
+
+  for(var i = 0; i < results.length; i++){
+    var r = results[i];
+    var norm = normalizeName(r.company || '');
+    if(!norm){ skipped++; continue; }
+
+    var exists = await isCompanyInMaster(norm);
+    if(exists){ skipped++; continue; }
+
+    var ok = await addToMasterList(r);
+    if(ok) saved++; else skipped++;
+
+    if(i % 5 === 0) await sleep(100);
+  }
+
+  return { saved: saved, skipped: skipped };
+}
+
+async function loadMasterStats(){
+  if(!fbReady || !fbDb) return { total: 0, thisMonth: 0 };
+  try {
+    var monthKey = new Date().toISOString().slice(0, 7);
+
+    // This month count
+    var monthSnap = await fbDb.collection('collector_master')
+      .where('addedMonth', '==', monthKey)
+      .get();
+
+    // Total count (get approximate via all — for now exact)
+    var allSnap = await fbDb.collection('collector_master').get();
+
+    return {
+      total: allSnap.size,
+      thisMonth: monthSnap.size
+    };
+  } catch(e){
+    console.warn('Master stats failed:', e.message);
+    return { total: 0, thisMonth: 0 };
+  }
+}
+
+async function renderMasterStats(){
+  var el = document.getElementById('masterStats');
+  if(!el) return;
+
+  el.innerHTML = '<div class="sub" style="text-align:center;padding:12px">Loading...</div>';
+
+  var stats = await loadMasterStats();
+
+  el.innerHTML =
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">' +
+      '<div class="stat-card">' +
+        '<div class="num">' + stats.total.toLocaleString() + '</div>' +
+        '<div class="lbl">Total Companies</div>' +
+      '</div>' +
+      '<div class="stat-card">' +
+        '<div class="num">' + stats.thisMonth.toLocaleString() + '</div>' +
+        '<div class="lbl">This Month</div>' +
+      '</div>' +
+    '</div>';
+}
+
+// ==================== SEARCH HISTORY ====================
+async function saveSearchToLog(query, industry, city, results, newCount, dupeCount, credits){
+  if(!fbReady || !fbDb) return;
+  try {
+    var now = Date.now();
+    var monthKey = new Date().toISOString().slice(0, 7);
+    var docId = 's_' + now + '_' + Math.floor(Math.random() * 9999);
+
+    await fbDb.collection('collector_search_log').doc(docId).set({
+      query: query,
+      industry: industry,
+      city: city,
+      totalResults: results,
+      newResults: newCount,
+      duplicates: dupeCount,
+      credits: credits || 0,
+      timestamp: now,
+      dateKey: new Date().toISOString().slice(0, 10),
+      monthKey: monthKey
+    });
+  } catch(e){
+    console.warn('Search log save failed:', e.message);
+  }
+}
+
+async function checkRecentSearch(query){
+  if(!fbReady || !fbDb) return null;
+  try {
+    var cutoff = Date.now() - (7 * 24 * 60 * 60 * 1000);
+    var snap = await fbDb.collection('collector_search_log')
+      .where('query', '==', query)
+      .where('timestamp', '>', cutoff)
+      .orderBy('timestamp', 'desc')
+      .limit(1)
+      .get();
+
+    if(snap.empty) return null;
+    var doc = snap.docs[0].data();
+    var daysAgo = Math.floor((Date.now() - doc.timestamp) / (24 * 60 * 60 * 1000));
+    return { ...doc, daysAgo: daysAgo };
+  } catch(e){
+    console.warn('Recent search check failed:', e.message);
+    return null;
+  }
+}
+
+async function loadSearchHistory(limit){
+  if(!fbReady || !fbDb) return [];
+  try {
+    var snap = await fbDb.collection('collector_search_log')
+      .orderBy('timestamp', 'desc')
+      .limit(limit || 50)
+      .get();
+
+    var logs = [];
+    snap.forEach(function(doc){ logs.push(doc.data()); });
+    return logs;
+  } catch(e){
+    console.warn('Search history load failed:', e.message);
+    return [];
+  }
+}
+
+async function renderSearchHistory(){
+  var el = document.getElementById('searchHistory');
+  if(!el) return;
+
+  el.innerHTML = '<div class="sub" style="text-align:center;padding:12px">Loading...</div>';
+
+  var logs = await loadSearchHistory(30);
+
+  if(logs.length === 0){
+    el.innerHTML = '<div class="sub" style="text-align:center;padding:12px">No searches yet</div>';
+    return;
+  }
+
+  // Group by date
+  var grouped = {};
+  logs.forEach(function(l){
+    var key = l.dateKey || 'unknown';
+    if(!grouped[key]) grouped[key] = [];
+    grouped[key].push(l);
+  });
+
+  var html = '';
+  Object.keys(grouped).sort().reverse().forEach(function(dateKey){
+    var items = grouped[dateKey];
+    var displayDate = dateKey;
+
+    try {
+      var d = new Date(dateKey);
+      displayDate = d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    } catch(e){}
+
+    html += '<div style="margin-bottom:14px">';
+    html += '<div style="font-size:11px;font-weight:700;color:#E8B86A;margin-bottom:8px">📅 ' + displayDate + '</div>';
+
+    items.forEach(function(l){
+      var time = '';
+      try {
+        time = new Date(l.timestamp).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+      } catch(e){}
+
+      html += '<div style="padding:8px 10px;background:#0A0A0C;border-radius:8px;margin-bottom:6px">' +
+        '<div style="font-size:12px;color:#e4e4e7"><b>' + esc(l.query) + '</b></div>' +
+        '<div style="font-size:10px;color:#71717a;margin-top:2px">' +
+          '⏰ ' + time + ' · ' +
+          '📊 ' + l.newResults + ' new' +
+          (l.duplicates > 0 ? ', ' + l.duplicates + ' dupes' : '') +
+        '</div>' +
+      '</div>';
+    });
+
+    html += '</div>';
+  });
+
+  el.innerHTML = html;
+}
+
+// ==================== QUERY ROTATION ====================
+function getQuerySuggestions(industry, city){
+  var suggestions = [];
+  var ind = industry.toLowerCase().trim();
+  var c = city.trim();
+
+  // Industry variations
+  var variations = {
+    'it company': ['software company', 'tech company', 'IT services', 'software development', 'IT firm', 'technology company'],
+    'manufacturing': ['factory', 'production company', 'industrial company', 'manufacturing unit'],
+    'corporate': ['business company', 'enterprise', 'multinational company']
+  };
+
+  var base = variations[ind] || [];
+  base.forEach(function(v){
+    suggestions.push(v + ' in ' + c);
+  });
+
+  // City variations
+  var nearby = {
+    'Noida': ['Greater Noida', 'Delhi', 'Ghaziabad'],
+    'Gurgaon': ['Gurugram', 'Delhi', 'Faridabad'],
+    'Delhi': ['New Delhi', 'Noida', 'Gurgaon', 'Faridabad'],
+    'Bangalore': ['Bengaluru', 'Whitefield', 'Electronic City']
+  };
+
+  var cities = nearby[c] || [];
+  cities.forEach(function(v){
+    suggestions.push(industry + ' in ' + v);
+  });
+
+  return suggestions.slice(0, 6);
+}
+
+function renderQuerySuggestions(){
+  var el = document.getElementById('querySuggestions');
+  if(!el) return;
+
+  var industry = document.getElementById('in_industry').value.trim();
+  var city = document.getElementById('in_city').value.trim();
+
+  if(!industry || !city){
+    el.innerHTML = '';
+    return;
+  }
+
+  var suggestions = getQuerySuggestions(industry, city);
+  if(suggestions.length === 0){
+    el.innerHTML = '';
+    return;
+  }
+
+  var html = '<div style="font-size:11px;color:#71717a;margin-bottom:8px">💡 Try these variations:</div>' +
+    '<div style="display:flex;flex-wrap:wrap;gap:6px">';
+
+  suggestions.forEach(function(s){
+    html += '<button class="pill sm" style="font-size:11px;padding:6px 12px" onclick="applyQuerySuggestion(\'' + escAttr(s) + '\')">' + esc(s) + '</button>';
+  });
+
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+function applyQuerySuggestion(suggestion){
+  // Parse "industry in city"
+  var parts = suggestion.split(' in ');
+  if(parts.length === 2){
+    document.getElementById('in_industry').value = parts[0].trim();
+    document.getElementById('in_city').value = parts[1].trim();
+  }
+}
+  
+// ==================== FIRST TIME SETUP ====================
+async function doSetup(){
+  var p1 = document.getElementById('setupPass1').value;
+  var p2 = document.getElementById('setupPass2').value;
+  var email = document.getElementById('setupEmail').value.trim();
+  var q = document.getElementById('setupQSelect').value;
+  var a = document.getElementById('setupAnswer').value.trim();
+  var err = document.getElementById('setupError');
+
+  function showErr(msg){ err.textContent = msg; err.classList.remove('hide'); }
+
+  if(p1.length < 6) return showErr('Password must be at least 6 characters');
+  if(p1 !== p2) return showErr('Passwords do not match');
+  if(!email || email.indexOf('@') === -1) return showErr('Enter a valid email address');
+  if(!a) return showErr('Enter security answer');
+
+  err.classList.add('hide');
+
+  var passHash = await sha256(p1);
+  var answerHash = await sha256(a.toLowerCase().trim());
+
+  STATE.auth = {
+    passHash: passHash,
+    email: email,
+    question: q,
+    answerHash: answerHash,
+    passHistory: [passHash],
+    createdAt: Date.now()
+  };
+  lsSet('sh_col_auth', STATE.auth);
+  saveAuthToFirebase();
+  alert('✅ Setup complete! Please login.');
+  show('loginScreen');
+}
+
+// ==================== LOGIN ====================
+async function doLogin(){
+  var pass = document.getElementById('loginPass').value;
+  var err = document.getElementById('loginError');
+  if(!pass){ err.textContent = 'Please enter password'; err.classList.remove('hide'); return; }
+  var h = await sha256(pass);
+  if(h !== STATE.auth.passHash){
+    err.textContent = '❌ Incorrect password'; err.classList.remove('hide');
+    document.getElementById('loginPass').value = '';
+    return;
+  }
+  err.classList.add('hide');
+  STATE.loggedIn = true;
+  lsSet('sh_col_session', { loggedIn: true, timestamp: Date.now() });
+  document.getElementById('loginPass').value = '';
+  showMain();
+}
+
+function lockApp(){
+  STATE.loggedIn = false;
+  localStorage.removeItem('sh_col_session');
+  STATE.selected = {};
+  STATE.editingIdx = null;
+  document.getElementById('loginPass').value = '';
+  show('loginScreen');
+}
+
+// ==================== FORGOT PASSWORD ====================
+function showForgot(){
+  document.getElementById('forgotStep1').classList.remove('hide');
+  document.getElementById('forgotStep2').classList.add('hide');
+  document.getElementById('forgotStep3').classList.add('hide');
+  document.getElementById('fgtQLabel').textContent = (STATE.auth && STATE.auth.question) || 'Security Question';
+  document.getElementById('fgtEmail').value = '';
+  document.getElementById('fgtAnswer').value = '';
+  document.getElementById('fgtCode').value = '';
+  document.getElementById('forgotError').classList.add('hide');
+  document.getElementById('forgotError2').classList.add('hide');
+  document.getElementById('forgotError3').classList.add('hide');
+  show('forgotScreen');
+}
+
+function backToLogin(){ show('loginScreen'); }
+
+async function sendResetCode(){
+  var email = document.getElementById('fgtEmail').value.trim();
+  var ans = document.getElementById('fgtAnswer').value.trim();
+  var err = document.getElementById('forgotError');
+  err.classList.add('hide');
+
+  var block = lsGet('sh_reset_block', 0);
+  if(block && Date.now() < block){
+    var mins = Math.ceil((block - Date.now()) / 60000);
+    err.textContent = '⛔ Blocked. Try again in ' + mins + ' minutes.'; err.classList.remove('hide'); return;
+  }
+
+  if(email !== STATE.auth.email){ err.textContent = 'Email does not match registered email'; err.classList.remove('hide'); return; }
+
+  var ah = await sha256(ans.toLowerCase().trim());
+  if(ah !== STATE.auth.answerHash){
+    STATE.resetAttempts = (STATE.resetAttempts || 0) + 1;
+    if(STATE.resetAttempts >= 3){
+      lsSet('sh_reset_block', Date.now() + 30 * 60 * 1000);
+      err.textContent = '⛔ 3 wrong attempts. Blocked for 30 minutes.'; err.classList.remove('hide');
+      STATE.resetAttempts = 0;
+      return;
+    }
+    err.textContent = '❌ Wrong answer (' + (3 - STATE.resetAttempts) + ' attempts left)'; err.classList.remove('hide'); return;
+  }
+  STATE.resetAttempts = 0;
+
+  var code = String(Math.floor(100000 + Math.random() * 900000));
+  STATE.resetCode = { code: code, expires: Date.now() + 15 * 60 * 1000 };
+
+  if(!STATE.emailConfig || !STATE.emailConfig.publicKey){
+    err.textContent = '⚠️ Email config not set. Go to Settings → Email Config.'; err.classList.remove('hide');
+    return;
+  }
+
+  try {
+    await sendEmailJS(code, email);
+    document.getElementById('forgotStep1').classList.add('hide');
+    document.getElementById('forgotStep2').classList.remove('hide');
+    startResetTimer();
+  } catch(e){
+    err.textContent = '❌ Email failed: ' + (e.message || 'Unknown error'); err.classList.remove('hide');
+  }
+}
+
+async function sendEmailJS(code, toEmail){
+  var cfg = STATE.emailConfig;
+  var res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      service_id: cfg.serviceId,
+      template_id: cfg.templateId,
+      user_id: cfg.publicKey,
+      template_params: {
+        to_email: toEmail,
+        code: code,
+        app_name: 'Seven Horses Data Collector'
+      }
+    })
+  });
+  if(!res.ok){
+    var txt = await res.text();
+    throw new Error(txt || ('HTTP ' + res.status));
+  }
+}
+
+var resetTimerInterval = null;
+function startResetTimer(){
+  if(resetTimerInterval) clearInterval(resetTimerInterval);
+  resetTimerInterval = setInterval(function(){
+    if(!STATE.resetCode){ clearInterval(resetTimerInterval); return; }
+    var left = STATE.resetCode.expires - Date.now();
+    var el = document.getElementById('fgtTimer');
+    if(left <= 0){
+      clearInterval(resetTimerInterval);
+      el.textContent = 'EXPIRED';
+      el.style.color = '#fca5a5';
+      return;
+    }
+    var m = Math.floor(left / 60000);
+    var s = Math.floor((left % 60000) / 1000);
+    el.textContent = m + ':' + String(s).padStart(2, '0');
+  }, 1000);
+}
+
+function verifyResetCode(){
+  var code = document.getElementById('fgtCode').value.trim();
+  var err = document.getElementById('forgotError2');
+  err.classList.add('hide');
+  if(!STATE.resetCode){ err.textContent = 'Code expired. Request a new one.'; err.classList.remove('hide'); return; }
+  if(Date.now() > STATE.resetCode.expires){ err.textContent = 'Code expired. Request a new one.'; err.classList.remove('hide'); return; }
+  if(code !== STATE.resetCode.code){ err.textContent = '❌ Incorrect code'; err.classList.remove('hide'); return; }
+  document.getElementById('forgotStep2').classList.add('hide');
+  document.getElementById('forgotStep3').classList.remove('hide');
+}
+
+async function resetPassword(){
+  var p1 = document.getElementById('fgtNew1').value;
+  var p2 = document.getElementById('fgtNew2').value;
+  var err = document.getElementById('forgotError3');
+  err.classList.add('hide');
+  if(p1.length < 6){ err.textContent = 'Password must be at least 6 characters'; err.classList.remove('hide'); return; }
+  if(p1 !== p2){ err.textContent = 'Passwords do not match'; err.classList.remove('hide'); return; }
+
+  var h = await sha256(p1);
+  if(STATE.auth.passHistory && STATE.auth.passHistory.indexOf(h) >= 0){
+    err.textContent = '⚠️ This password was used before. Enter a new one.'; err.classList.remove('hide'); return;
+  }
+
+  STATE.auth.passHash = h;
+  STATE.auth.passHistory = [h].concat(STATE.auth.passHistory || []).slice(0, 3);
+  lsSet('sh_col_auth', STATE.auth);
+  saveAuthToFirebase();
+  STATE.resetCode = null;
+  if(resetTimerInterval) clearInterval(resetTimerInterval);
+  alert('✅ Password reset successful!');
+  show('loginScreen');
+}
+
+// ==================== ESCAPE UTILS ====================
+function esc(s){ return String(s || '').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function escAttr(s){ return String(s || '').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+// ==================== CHANGE PASSWORD ====================
+function openChangePass(){
+  var body = '<h3>🔐 Change Password</h3>' +
+    '<div class="field"><label>Current Password</label><input id="cp_old" type="password"></div>' +
+    '<div class="field"><label>New Password</label><input id="cp_new" type="password" placeholder="Min 6 characters"></div>' +
+    '<div class="field"><label>Confirm New Password</label><input id="cp_new2" type="password"></div>' +
+    '<div id="cp_err" class="sub hide" style="color:#fca5a5;font-size:12px"></div>' +
+    '<div class="row" style="margin-top:16px"><button style="flex:1" onclick="closeModal()">Cancel</button><button class="gold" style="flex:1" onclick="submitChangePass()">Change</button></div>';
+  showModal('Change Password', body);
+}
+
+async function submitChangePass(){
+  var oldP = document.getElementById('cp_old').value;
+  var newP = document.getElementById('cp_new').value;
+  var newP2 = document.getElementById('cp_new2').value;
+  var err = document.getElementById('cp_err');
+  err.classList.add('hide');
+
+  var oldH = await sha256(oldP);
+  if(oldH !== STATE.auth.passHash){ err.textContent = '❌ Current password is incorrect'; err.classList.remove('hide'); return; }
+  if(newP.length < 6){ err.textContent = 'Password must be at least 6 characters'; err.classList.remove('hide'); return; }
+  if(newP !== newP2){ err.textContent = 'Passwords do not match'; err.classList.remove('hide'); return; }
+
+  var newH = await sha256(newP);
+  if(STATE.auth.passHistory.indexOf(newH) >= 0){
+    err.textContent = '⚠️ This password was used before. Enter a new one.'; err.classList.remove('hide'); return;
+  }
+
+  STATE.auth.passHash = newH;
+  STATE.auth.passHistory = [newH].concat(STATE.auth.passHistory).slice(0, 3);
+  lsSet('sh_col_auth', STATE.auth);
+  saveAuthToFirebase();
+  closeModal();
+  alert('✅ Password changed! Old password is now invalid.');
+}
+
+// ==================== EMAIL CONFIG ====================
+function openEmailConfig(){
+  var cfg = STATE.emailConfig || {};
+  var body = '<h3>📧 Email Config (EmailJS)</h3>' +
+    '<p class="sub" style="font-size:12px;margin-bottom:14px">Create a free account at emailjs.com and copy the 3 values below.</p>' +
+    '<div class="field"><label>Public Key</label><input id="ec_pk" value="' + escAttr(cfg.publicKey||'') + '" placeholder="Public Key"></div>' +
+    '<div class="field"><label>Service ID</label><input id="ec_sid" value="' + escAttr(cfg.serviceId||'') + '" placeholder="service_xxxxxx"></div>' +
+    '<div class="field"><label>Template ID</label><input id="ec_tid" value="' + escAttr(cfg.templateId||'') + '" placeholder="template_xxxxxx"></div>' +
+    '<div class="field"><label>Reset Email (where code is sent)</label><input id="ec_to" value="' + escAttr((STATE.auth && STATE.auth.email) || '') + '" placeholder="your@email.com"></div>' +
+    '<div class="row" style="margin-top:16px"><button style="flex:1" onclick="closeModal()">Cancel</button><button class="gold" style="flex:1" onclick="saveEmailConfig()">Save</button></div>';
+  showModal('Email Config', body);
+}
+
+function saveEmailConfig(){
+  var cfg = {
+    publicKey: document.getElementById('ec_pk').value.trim(),
+    serviceId: document.getElementById('ec_sid').value.trim(),
+    templateId: document.getElementById('ec_tid').value.trim()
+  };
+  var toEmail = document.getElementById('ec_to').value.trim();
+  STATE.emailConfig = cfg;
+  lsSet('sh_col_email', cfg);
+  if(toEmail && STATE.auth){
+    STATE.auth.email = toEmail;
+    lsSet('sh_col_auth', STATE.auth);
+  }
+  closeModal();
+  alert('✅ Email config saved');
+}
+
+// ==================== SECURITY QUESTION ====================
+function openSecurityQ(){
+  var body = '<h3>❓ Change Security Question</h3>' +
+    '<div class="field"><label>Question</label><input id="sq_q" value="' + escAttr((STATE.auth && STATE.auth.question) || '') + '"></div>' +
+    '<div class="field"><label>New Answer</label><input id="sq_a" placeholder="New answer"></div>' +
+    '<div class="row" style="margin-top:16px"><button style="flex:1" onclick="closeModal()">Cancel</button><button class="gold" style="flex:1" onclick="saveSecurityQ()">Save</button></div>';
+  showModal('Security Question', body);
+}
+
+async function saveSecurityQ(){
+  var q = document.getElementById('sq_q').value.trim();
+  var a = document.getElementById('sq_a').value.trim();
+  if(!q || !a){ alert('Please fill both fields'); return; }
+  STATE.auth.question = q;
+  STATE.auth.answerHash = await sha256(a.toLowerCase());
+  lsSet('sh_col_auth', STATE.auth);
+  saveAuthToFirebase();
+  closeModal();
+  alert('✅ Security question updated');
+}
+
+// ==================== API KEYS ====================
+function saveKey(k, v){
+  STATE.keys[k] = v.trim();
+  lsSet('sh_col_keys', STATE.keys);
+  saveKeysToFirebase();
+}
+
+// ==================== FIREBASE: SAVE KEYS ====================
+async function saveKeysToFirebase(){
+  if(!fbReady || !fbDb){
+    console.warn('⚠️ Firebase not ready — keys saved locally only');
+    return;
+  }
+  try {
+    await fbDb.collection('collector_config').doc('api_keys').set({
+      apify: STATE.keys.apify || 'placeholder',
+      gplaces: STATE.keys.gplaces || 'placeholder',
+      serp: STATE.keys.serp || 'placeholder',
+      apollo: STATE.keys.apollo || 'placeholder',
+      updatedAt: Date.now(),
+      updatedBy: (STATE.user && STATE.user.email) || 'master'
+    }, { merge: true });
+    console.log('✅ Keys synced to Firebase');
+  } catch(e){
+    console.error('❌ Firebase save failed:', e.message);
+  }
+}
+function saveToggle(k, v){
+  STATE.toggles[k] = v;
+  lsSet('sh_col_toggles', STATE.toggles);
+  renderPriorityOrder();
+}
+function hasKey(k){ return STATE.keys[k] && STATE.keys[k].length > 5; }
+function isOn(k){ return STATE.toggles[k] === true; }
+
+function loadKeysToUI(){
+  ['apify','gplaces','serp','apollo','hunter'].forEach(function(k){
+    var inp = document.getElementById('key_' + k);
+    if(inp && STATE.keys[k]) inp.value = STATE.keys[k];
+  });
+}
+function loadTogglesToUI(){
+  ['apify','gplaces','serp','apollo','hunter'].forEach(function(k){
+    var tg = document.getElementById('tg_' + k);
+    if(tg) tg.checked = !!STATE.toggles[k];
+  });
+}
+
+async function testKey(k){
+  var st = document.getElementById('st_' + k);
+  if(!hasKey(k)){ st.innerHTML = '⚫ Not set'; st.style.color = '#71717a'; return; }
+  st.innerHTML = '🟡 Checking...'; st.style.color = '#fbbf24';
+  try {
+    var result = await validateKey(k);
+    if(result.ok){
+      st.innerHTML = '🟢 Valid'; st.style.color = '#6ee7b7';
+    } else {
+      st.innerHTML = '🔴 ' + (result.err || 'Invalid'); st.style.color = '#fca5a5';
+    }
+  } catch(e){
+    st.innerHTML = '🔴 ' + (e.message || 'Error'); st.style.color = '#fca5a5';
+  }
+}
+
+async function validateKey(k){
+  if(!hasKey(k)) return { ok: false, err: 'Not set' };
+
+  var key = STATE.keys[k];
+
+  // Fast format checks (no network call)
+  if(k === 'apify' && key.indexOf('apify_api_') !== 0){
+    return { ok: false, err: 'Bad format' };
+  }
+  if(k === 'apollo' && key.length <= 20){
+    return { ok: false, err: 'Too short' };
+  }
+
+  // Worker-based validation (secure, key never leaves server)
+  try {
+    var res = await fetch(WORKER_URL + '/validate?service=' + k);
+    if(!res.ok){
+      return { ok: false, err: 'HTTP ' + res.status };
+    }
+    var result = await res.json();
+    return result;
+  } catch(e){
+    return { ok: false, err: 'Network error' };
+  }
+  }
+
+// ==================== MODAL ====================
+function openModal(type){
+  if(type === 'changePass') openChangePass();
+  else if(type === 'emailConfig') openEmailConfig();
+  else if(type === 'securityQ') openSecurityQ();
+  else if(type === 'exportKeys') openExportKeys();
+  else if(type === 'importKeys') openImportKeys();
+}
+
+function showModal(title, body){
+  var html = '<div class="row" style="justify-content:space-between;margin-bottom:18px">' +
+    '<div style="font-size:16px;font-weight:700">' + title + '</div>' +
+    '<button onclick="closeModal()" style="padding:6px 12px;width:auto">✕</button></div>' + body;
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modalBg').classList.remove('hide');
+}
+function closeModal(){ document.getElementById('modalBg').classList.add('hide'); }
+
+// ==================== EXPORT / IMPORT KEYS ====================
+function openExportKeys(){
+  var data = { keys: STATE.keys, toggles: STATE.toggles, emailConfig: STATE.emailConfig };
+  var str = '';
+  try { str = btoa(JSON.stringify(data)); } catch(e){ str = 'ERROR'; }
+  var body = '<h3>💾 Export Keys</h3>' +
+    '<p class="sub" style="font-size:12px;margin-bottom:12px">Keep this code safe. You can import it on another device.</p>' +
+    '<textarea id="ek_out" rows="6" style="font-size:11px;font-family:monospace" onclick="this.select()">' + str + '</textarea>' +
+    '<button class="blue" style="width:100%;margin-top:10px" onclick="copyKeys()">📋 Copy to Clipboard</button>';
+  showModal('Export Keys', body);
+}
+function copyKeys(){
+  var t = document.getElementById('ek_out');
+  t.select();
+  try { document.execCommand('copy'); alert('✅ Copied!'); } catch(e){ alert('Please copy manually'); }
+}
+
+function openImportKeys(){
+  var body = '<h3>📥 Import Keys</h3>' +
+    '<p class="sub" style="font-size:12px;margin-bottom:12px">Paste your export code below</p>' +
+    '<textarea id="ik_in" rows="6" style="font-size:11px;font-family:monospace" placeholder="Paste code here"></textarea>' +
+    '<button class="gold" style="width:100%;margin-top:10px" onclick="doImportKeys()">Import</button>';
+  showModal('Import Keys', body);
+}
+function doImportKeys(){
+  try {
+    var txt = document.getElementById('ik_in').value.trim();
+    var data = JSON.parse(atob(txt));
+    if(data.keys){ STATE.keys = data.keys; lsSet('sh_col_keys', data.keys); }
+    if(data.toggles){ STATE.toggles = data.toggles; lsSet('sh_col_toggles', data.toggles); }
+    if(data.emailConfig){ STATE.emailConfig = data.emailConfig; lsSet('sh_col_email', data.emailConfig); }
+    closeModal();
+    loadKeysToUI();
+    loadTogglesToUI();
+    renderPriorityOrder();
+    alert('✅ Imported successfully');
+  } catch(e){ alert('❌ Invalid code'); }
+}
+
+// ==================== PRESETS ====================
+function selectPreset(name){
+  STATE.preset = name;
+  document.querySelectorAll('.pill[data-preset]').forEach(function(p){ p.classList.remove('on'); });
+  var target = document.querySelector('.pill[data-preset="' + name + '"]');
+  if(target) target.classList.add('on');
+  document.getElementById('customFields').classList.toggle('hide', name !== 'custom');
+}
+
+function renderCustomFieldsList(){
+  var list = document.getElementById('customFieldsList');
+  if(!list) return;
+  var html = '';
+  ALL_FIELDS.forEach(function(f){
+    html += '<label style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#e4e4e7;cursor:pointer;margin-right:14px;margin-bottom:8px;text-transform:none;letter-spacing:0">' +
+      '<input type="checkbox" class="chk" value="' + f.id + '" style="width:16px;height:16px"> ' + f.label + '</label>';
+  });
+  list.innerHTML = html;
+}
+
+function getActiveFields(){
+  if(STATE.preset === 'custom'){
+    var arr = [];
+    document.querySelectorAll('#customFieldsList input:checked').forEach(function(i){ arr.push(i.value); });
+    return arr.length ? arr : ['company','contact','email','phone','location','address'];
+  }
+  return PRESETS[STATE.preset];
+}
+
+// ==================== PRIORITY ORDER DISPLAY ====================
+function renderPriorityOrder(){
+  var el = document.getElementById('priorityOrder');
+  if(!el) return;
+
+  var u = STATE.usage || {};
+  var all = [
+    {key:'gplaces', name:'Google Places', icon:'🟢', limit:(u.gplaces && u.gplaces.limit) || 6250},
+    {key:'apify',   name:'Apify',         icon:'🔷', limit:(u.apify && u.apify.limit) || 1250},
+    {key:'serp',    name:'SerpAPI',       icon:'🟣', limit:(u.serp && u.serp.limit) || 250},
+    {key:'apollo',  name:'Apollo',        icon:'🟡', limit:(u.apollo && u.apollo.limit) || 75},
+{key:'hunter',  name:'Hunter',        icon:'🟠', limit:(u.hunter && u.hunter.limit) || 25}
+  ];
+  all.sort(function(a,b){ return b.limit - a.limit; });
+
+  var html = '';
+  all.forEach(function(s, i){
+    var active = isOn(s.key) && hasKey(s.key);
+    var statusText = active ? 'Active' : (hasKey(s.key) ? 'Disabled' : 'No key');
+    var statusColor = active ? '#6ee7b7' : (hasKey(s.key) ? '#fbbf24' : '#71717a');
+    var statusIcon = active ? '🟢' : (hasKey(s.key) ? '🟡' : '⚫');
+
+    html += '<div style="display:flex;align-items:center;gap:12px;padding:12px;background:#0E0E10;border:1px solid #1E1E22;border-radius:12px;margin-bottom:8px">' +
+      '<div style="font-size:14px;font-weight:800;color:#E8B86A;min-width:24px">' + (i+1) + '</div>' +
+      '<div style="font-size:18px">' + s.icon + '</div>' +
+      '<div style="flex:1;min-width:0">' +
+        '<div style="font-size:12px;font-weight:700">' + s.name + '</div>' +
+        '<div style="font-size:10px;color:#71717a">Limit: ' + s.limit.toLocaleString() + ' / month</div>' +
+      '</div>' +
+      '<div style="font-size:11px;font-weight:600;color:' + statusColor + ';white-space:nowrap">' + statusIcon + ' ' + statusText + '</div>' +
+    '</div>';
+  });
+
+  el.innerHTML = html;
+}
+
+// ==================== RESET EVERYTHING ====================
+function resetEverything(){
+  if(!confirm('⚠️ All data will be deleted (keys, results, usage). Continue?')) return;
+  if(!confirm('Are you sure? This cannot be undone.')) return;
+  ['sh_col_keys','sh_col_toggles','sh_col_usage','sh_col_email','sh_col_results','sh_col_actionlog'].forEach(function(k){
+    localStorage.removeItem(k);
+  });
+  location.reload();
+     }
+  // ==================== MONTHLY USAGE TRACKER ====================
+function initUsage(){
+  var currentMonth = new Date().toISOString().slice(0, 7);
+  var stored = lsGet('sh_col_usage', null);
+  var defaults = {
+    month: currentMonth,
+    gplaces: { used: 0, limit: 6250, unit: 'searches' },
+    apify:   { used: 0, limit: 1250, unit: 'companies' },
+    serp:    { used: 0, limit: 250,  unit: 'searches' },
+    apollo:  { used: 0, limit: 75,   unit: 'credits' }, hunter:  { used: 0, limit: 25,   unit: 'searches' }
+  };
+
+  if(!stored || !stored.month){
+    STATE.usage = defaults;
+    lsSet('sh_col_usage', defaults);
+    return;
+  }
+
+  if(stored.month !== currentMonth){
+    Object.keys(stored).forEach(function(k){
+      if(k !== 'month' && stored[k] && typeof stored[k] === 'object'){
+        stored[k].used = 0;
+      }
+    });
+    stored.month = currentMonth;
+    lsSet('sh_col_usage', stored);
+    console.log('✅ Monthly usage reset:', currentMonth);
+  }
+
+  STATE.usage = stored;
+// ==================== MIGRATION: Add new sources ====================
+if(!STATE.usage.hunter){
+  STATE.usage.hunter = { used: 0, limit: 25, unit: 'searches' };
+}
+if(STATE.usage.apollo && STATE.usage.apollo.limit === 600){
+  STATE.usage.apollo.limit = 75;
+  STATE.usage.apollo.unit = 'credits';
+}
+lsSet('sh_col_usage', STATE.usage);
+}
+
+function addUsage(source, count){
+  if(!STATE.usage || !STATE.usage[source]) return;
+  STATE.usage[source].used += count;
+  lsSet('sh_col_usage', STATE.usage);
+  renderUsage();
+  renderPriorityOrder();
+}
+
+function renderUsage(){
+  var panel = document.getElementById('usagePanel');
+  if(!panel) return;
+
+  var u = STATE.usage || {};
+  var sources = [
+    {key:'gplaces', name:'Google Places', icon:'🟢'},
+    {key:'apify',   name:'Apify',         icon:'🔷'},
+    {key:'serp',    name:'SerpAPI',       icon:'🟣'},
+    {key:'apollo',  name:'Apollo',        icon:'🟡'},
+    {key:'hunter',  name:'Hunter',        icon:'🟠'}
+  ];
+
+  var html = '';
+  sources.forEach(function(s){
+    var data = u[s.key];
+    if(!data) return;
+    var pct = Math.min(100, Math.round((data.used / data.limit) * 100));
+    var color = pct < 50 ? '#6ee7b7' : (pct < 80 ? '#fbbf24' : '#fca5a5');
+
+    html += '<div class="usage-row">' +
+      '<div class="usage-head">' +
+        '<span class="name">' + s.icon + ' ' + s.name + '</span>' +
+        '<span class="val" style="color:' + color + '">' + data.used.toLocaleString() + ' / ' + data.limit.toLocaleString() + '</span>' +
+      '</div>' +
+      '<div class="usage-track"><div class="usage-fill" style="width:' + pct + '%;background:' + color + '"></div></div>' +
+    '</div>';
+  });
+
+  panel.innerHTML = html;
+}
+
+var _countdownInterval = null;
+function updateResetCountdown(){
+  var el = document.getElementById('resetCountdown');
+  if(!el) return;
+  if(_countdownInterval) clearInterval(_countdownInterval);
+
+  function tick(){
+    var now = new Date();
+    var nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    var diff = nextMonth - now;
+    var days = Math.floor(diff / 86400000);
+    var hours = Math.floor((diff / 3600000) % 24);
+    var mins = Math.floor((diff / 60000) % 60);
+    el.textContent = '⏰ Reset in: ' + days + 'd ' + hours + 'h ' + mins + 'm';
+  }
+  tick();
+  _countdownInterval = setInterval(tick, 60000);
+}
+
+// ==================== LOG & PROGRESS ====================
+function log(msg, type){
+  var box = document.getElementById('logBox');
+  if(!box) return;
+  var d = document.createElement('div');
+  d.className = type || 'info';
+  d.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg;
+  box.appendChild(d);
+  box.scrollTop = box.scrollHeight;
+  // Keep only last 200 entries
+  while(box.children.length > 200){
+    box.removeChild(box.firstChild);
+  }
+}
+
+function updateProgress(cur, total, skipped){
+  var pct = total > 0 ? Math.min(100, (cur / total) * 100) : 0;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressText').textContent = 'Collected: ' + cur + ' / ' + total;
+  document.getElementById('statTotal').textContent = cur;
+  if(skipped !== undefined) document.getElementById('statSkipped').textContent = skipped;
+  document.getElementById('statUnique').textContent = cur;
+}
+
+function stopCollection(){
+  STATE.stopped = true;
+  log('⏹ Stopped by user', 'err');
+}
+
+function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+
+// ==================== VERIFICATION ====================
+function isCompanyNameValid(name){
+  if(!name) return false;
+  var n = String(name).trim();
+  if(n.length < 2) return false;
+  if(/^\d+$/.test(n)) return false;
+  return true;
+}
+
+function isEmailValid(email){
+  if(!email) return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email).trim().toLowerCase());
+}
+
+function isPhoneValid(phone){
+  if(!phone) return false;
+  var digits = String(phone).replace(/\D/g, '');
+  return digits.length >= 10;
+}
+
+function normalizeName(name){
+  return String(name || '').toLowerCase()
+    .replace(/\b(pvt|ltd|limited|private|co|inc|llp|corporation|corp|company|india)\b/g, '')
+    .replace(/[.,\-&()]/g, '')
+    .replace(/\s+/g, '')
+    .trim();
+}
+
+function verifyCompany(row){
+  // 1. Basic validation
+  if(!isCompanyNameValid(row.company)){
+    return { ok: false, reason: 'Invalid company name' };
+  }
+  var hasContact = isEmailValid(row.email) || isPhoneValid(row.phone);
+  if(!hasContact && !row.address){
+    return { ok: false, reason: 'No contact info' };
+  }
+
+  // 2. Clean up invalid fields
+  row.company = String(row.company).trim();
+  if(row.email && !isEmailValid(row.email)) row.email = '';
+  if(row.phone && !isPhoneValid(row.phone)) row.phone = '';
+
+  // 3. Read filters from UI
+  var filters = getActiveFilters();
+
+  // 4. Must-Have filters
+  if(filters.requirePhone && !row.phone){
+    return { ok: false, reason: 'Phone missing (required)' };
+  }
+  if(filters.requireEmail && !row.email){
+    return { ok: false, reason: 'Email missing (required)' };
+  }
+  if(filters.requireWebsite && !row.website){
+    return { ok: false, reason: 'Website missing (required)' };
+  }
+  if(filters.requireAddress && !row.address){
+    return { ok: false, reason: 'Address missing (required)' };
+  }
+
+  // 5. Include keywords (must match at least one)
+  if(filters.include.length > 0){
+    var haystack = ((row.company||'') + ' ' + (row.industry||'') + ' ' + (row.category||'')).toLowerCase();
+    var matched = filters.include.some(function(kw){
+      return haystack.indexOf(kw.toLowerCase()) !== -1;
+    });
+    if(!matched){
+      return { ok: false, reason: 'Does not match include keywords' };
+    }
+  }
+
+  // 6. Exclude keywords (must NOT match any)
+  if(filters.exclude.length > 0){
+    var haystack2 = ((row.company||'') + ' ' + (row.industry||'') + ' ' + (row.category||'')).toLowerCase();
+    var badMatch = filters.exclude.some(function(kw){
+      return haystack2.indexOf(kw.toLowerCase()) !== -1;
+    });
+    if(badMatch){
+      return { ok: false, reason: 'Matches exclude keyword' };
+    }
+  }
+
+  // 7. Employee size check
+  if(filters.sizeMin > 1 || filters.sizeMax < 999999){
+    var emp = parseInt(row.employees, 10) || 0;
+    if(emp > 0){
+      if(emp < filters.sizeMin || emp > filters.sizeMax){
+        return { ok: false, reason: 'Size out of range (' + emp + ' employees)' };
+      }
+    }
+    // Agar employees field khali hai, skip karo (galat reject nahi karenge)
+  }
+
+  // 8. Minimum rating check
+  if(filters.minRating > 0){
+    var rating = parseFloat(row.rating) || 0;
+    if(rating > 0){
+      if(rating < filters.minRating){
+        return { ok: false, reason: 'Rating too low (' + rating + ')' };
+      }
+    }
+    // Agar rating field khali hai, skip karo
+  }
+
+  return { ok: true };
+  }
+  
+// ==================== NEW: READ ACTIVE FILTERS ====================
+function getActiveFilters(){
+  var sizeVal = document.getElementById('f_size') ? document.getElementById('f_size').value : '';
+  var sizeMin = 0, sizeMax = 999999;
+  if(sizeVal && sizeVal.indexOf(',') > 0){
+    var parts = sizeVal.split(',');
+    sizeMin = parseInt(parts[0], 10) || 0;
+    sizeMax = parseInt(parts[1], 10) || 999999;
+  }
+
+  var ratingVal = document.getElementById('f_rating') ? document.getElementById('f_rating').value : '';
+  var minRating = ratingVal ? parseFloat(ratingVal) : 0;
+
+  var reqPhone = document.getElementById('f_req_phone') ? document.getElementById('f_req_phone').checked : false;
+  var reqEmail = document.getElementById('f_req_email') ? document.getElementById('f_req_email').checked : false;
+  var reqWebsite = document.getElementById('f_req_website') ? document.getElementById('f_req_website').checked : false;
+  var reqAddress = document.getElementById('f_req_address') ? document.getElementById('f_req_address').checked : false;
+
+  var includeRaw = document.getElementById('f_include') ? document.getElementById('f_include').value : '';
+  var excludeRaw = document.getElementById('f_exclude') ? document.getElementById('f_exclude').value : '';
+
+  var includeArr = includeRaw.split(',').map(function(s){ return s.trim(); }).filter(function(s){ return s.length > 0; });
+  var excludeArr = excludeRaw.split(',').map(function(s){ return s.trim(); }).filter(function(s){ return s.length > 0; });
+
+  return {
+    sizeMin: sizeMin,
+    sizeMax: sizeMax,
+    minRating: minRating,
+    requirePhone: reqPhone,
+    requireEmail: reqEmail,
+    requireWebsite: reqWebsite,
+    requireAddress: reqAddress,
+    include: includeArr,
+    exclude: excludeArr
+  };
+  }
+
+// ==================== SOURCE PRIORITY ====================
+function getActiveSourcesSorted(){
+  var u = STATE.usage || {};
+  var sources = [
+    { key:'gplaces', name:'Google Places', limit: (u.gplaces && u.gplaces.limit) || 6250 },
+    { key:'apify',   name:'Apify',         limit: (u.apify && u.apify.limit) || 1250 },
+    { key:'serp',    name:'SerpAPI',       limit: (u.serp && u.serp.limit) || 250 },
+    { key:'apollo',  name:'Apollo',        limit: (u.apollo && u.apollo.limit) || 600 }
+  ];
+
+  // Sort by HIGHEST limit first
+  sources.sort(function(a, b){ return b.limit - a.limit; });
+
+  return sources.filter(function(s){
+    return isOn(s.key) && hasKey(s.key);
+  });
+}
+
+// ==================== SMART ENRICHMENT ====================
+  function toggleSmartEnrich(checked){
+  STATE.smartEnrich = checked;
+  lsSet('sh_col_smartenrich', checked);
+  
+  var toggle = document.getElementById('smartEnrichToggle');
+  if(toggle) toggle.checked = checked;
+  
+  console.log('⚡ Smart Enrichment: ' + (checked ? 'ON' : 'OFF'));
+}
+
+function shouldSkipEnrich(row){
+  // Skip if all fields present
+  if(row.phone && row.email && row.contact && row.employees) return true;
+  return false;
+}
+
+async function smartEnrichRow(row){
+  if(shouldSkipEnrich(row)) return row;
+
+  var company = row.company || '';
+  var domain = '';
+  if(row.website){
+    domain = String(row.website).replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0];
+  }
+
+  // Try Apollo first (Contact + Employees + Email)
+  if(!row.contact || !row.employees || !row.email){
+    try {
+      var apolloUrl = WORKER_URL + '/enrich/apollo?company=' + encodeURIComponent(company);
+      if(domain) apolloUrl += '&domain=' + encodeURIComponent(domain);
+
+      var aRes = await fetch(apolloUrl);
+      var aData = await aRes.json();
+
+      if(aData.ok){
+        if(!row.contact && aData.contact) row.contact = aData.contact;
+        if(!row.email && aData.email) row.email = aData.email;
+        if(!row.employees && aData.employees) row.employees = aData.employees;
+        if(!row.industry && aData.industry) row.industry = aData.industry;
+        if(!row.website && aData.website) {
+          row.website = aData.website;
+          domain = String(row.website).replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0];
+        }
+        if(!row.phone && aData.phone) row.phone = aData.phone;
+        log('    ✓ Apollo: +' + [
+          aData.contact ? 'contact' : null,
+          aData.email ? 'email' : null,
+          aData.employees ? 'employees' : null
+        ].filter(Boolean).join(', '), 'ok');
+      }
+    } catch(e){
+      log('    ⚠ Apollo enrich failed: ' + e.message, 'warn');
+    }
+
+    await sleep(300);
+  }
+
+  // Try Hunter for email (if still missing)
+  if(!row.email && domain){
+    try {
+      var hUrl = WORKER_URL + '/enrich/hunter?domain=' + encodeURIComponent(domain);
+      var hRes = await fetch(hUrl);
+      var hData = await hRes.json();
+
+      if(hData.ok && hData.email){
+        row.email = hData.email;
+        log('    ✓ Hunter: +email (' + hData.email + ')', 'ok');
+      }
+    } catch(e){
+      log('    ⚠ Hunter enrich failed: ' + e.message, 'warn');
+    }
+
+    await sleep(300);
+  }
+
+  // Try Apify for phone + website (if missing)
+  if(!row.phone || !row.website){
+    try {
+      var apQuery = company + (row.location ? ' ' + row.location : '');
+      var apUrl = WORKER_URL + '/enrich/apify?query=' + encodeURIComponent(apQuery);
+      var apRes = await fetch(apUrl);
+      var apData = await apRes.json();
+
+      if(apData.ok){
+        if(!row.phone && apData.phone) row.phone = apData.phone;
+        if(!row.website && apData.website) row.website = apData.website;
+        log('    ✓ Apify: +' + [
+          apData.phone ? 'phone' : null,
+          apData.website ? 'website' : null
+        ].filter(Boolean).join(', '), 'ok');
+      }
+    } catch(e){
+      log('    ⚠ Apify enrich failed: ' + e.message, 'warn');
+    }
+  }
+
+  row.enriched = true;
+  row.enrichedAt = Date.now();
+  return row;
+}
+
+// ==================== MAIN COLLECTION ====================
+async function startCollection(){
+  if(STATE.results.length > 0){
+    if(!confirm('Clear previous results and start a new collection?')) return;
+  }
+
+  STATE.stopped = false;
+  STATE.results = [];
+  STATE.selected = {};
+  STATE.editingIdx = null;
+
+  // Read filters once and store globally for API runners
+  STATE.activeFilters = getActiveFilters();
+
+  document.getElementById('progressCard').classList.remove('hide');
+  document.getElementById('logBox').innerHTML = '';
+  document.getElementById('resultBody').innerHTML = '';
+  document.getElementById('btn_start').disabled = true;
+
+  var industry = document.getElementById('in_industry').value.trim();
+  var city = document.getElementById('in_city').value.trim();
+  var targetCount = parseInt(document.getElementById('in_count').value) || 50;
+  var maxPerSource = parseInt(document.getElementById('in_max').value) || 50;
+  var query = industry + ' in ' + city;
+
+// ===== RECENT SEARCH WARNING =====
+try {
+  var recent = await checkRecentSearch(query);
+  if(recent){
+    var msg = '⚠️ SAME SEARCH FOUND!\n\n' +
+      'Query: "' + query + '"\n' +
+      'Searched: ' + recent.daysAgo + ' day(s) ago\n' +
+      'Results: ' + recent.newResults + ' new, ' + recent.duplicates + ' duplicates\n\n' +
+      'Continue anyway? (Will waste credits)\n\n' +
+      'Tip: Try a different query — check suggestions below input.';
+    if(!confirm(msg)){
+      log('⏹ Cancelled — duplicate query avoided', 'warn');
+      document.getElementById('progressCard').classList.add('hide');
+      document.getElementById('btn_start').disabled = false;
+      return;
+    }
+  }
+} catch(e){
+  console.warn('Recent search check failed:', e.message);
+}
+// ===== END WARNING =====
+
+  log('🎯 Target: ' + query + ' (' + targetCount + ' companies)', 'info');
+
+  // Log active filters
+  var f = STATE.activeFilters;
+  if(f.sizeMin > 1 || f.sizeMax < 999999){
+    log('📏 Size filter: ' + f.sizeMin + ' - ' + f.sizeMax + ' employees', 'info');
+  }
+  if(f.minRating > 0){
+    log('⭐ Min rating: ' + f.minRating + '+', 'info');
+  }
+  var reqs = [];
+  if(f.requirePhone) reqs.push('Phone');
+  if(f.requireEmail) reqs.push('Email');
+  if(f.requireWebsite) reqs.push('Website');
+  if(f.requireAddress) reqs.push('Address');
+  if(reqs.length > 0){
+    log('✅ Must-have: ' + reqs.join(', '), 'info');
+  }
+  if(f.include.length > 0){
+    log('✅ Include keywords: ' + f.include.join(', '), 'info');
+  }
+  if(f.exclude.length > 0){
+    log('🚫 Exclude keywords: ' + f.exclude.join(', '), 'info');
+  }
+
+  var sources = getActiveSourcesSorted();
+  if(sources.length === 0){
+    log('❌ No active source. Check your API keys and toggles.', 'err');
+    document.getElementById('btn_start').disabled = false;
+    return;
+  }
+
+  log('🔧 Priority: ' + sources.map(function(s){ return s.name; }).join(' → '), 'info');
+
+  var skippedCount = 0;
+  var seenNames = {};
+
+  for(var i = 0; i < sources.length; i++){
+    if(STATE.stopped) break;
+    if(STATE.results.length >= targetCount) break;
+
+    var src = sources[i];
+    var used = (STATE.usage[src.key] && STATE.usage[src.key].used) || 0;
+    var limit = (STATE.usage[src.key] && STATE.usage[src.key].limit) || 0;
+
+    if(used >= limit){
+      log('⚠ ' + src.name + ' limit exhausted — skipping', 'warn');
+      continue;
+    }
+
+    log('▶ Running: ' + src.name, 'info');
+
+    try {
+      var data = [];
+      if(src.key === 'gplaces') data = await runGPlaces(query, maxPerSource);
+      else if(src.key === 'apify') data = await runApify(query, maxPerSource);
+      else if(src.key === 'serp') data = await runSerp(query, maxPerSource);
+      else if(src.key === 'apollo') data = await runApollo(industry, city, maxPerSource);
+
+      log('📥 ' + src.name + ': ' + data.length + ' raw results', 'info');
+
+      var added = 0;
+      for(var j = 0; j < data.length; j++){
+        if(STATE.results.length >= targetCount) break;
+        var row = data[j];
+        row.source = src.key;
+
+        var v = verifyCompany(row);
+        if(!v.ok){
+          skippedCount++;
+          if(skippedCount <= 10){
+            log('⚠ Skipped: "' + (row.company || '?') + '" — ' + v.reason, 'warn');
+          }
+          continue;
+        }
+
+        var key = normalizeName(row.company);
+        if(seenNames[key]){
+          skippedCount++;
+          continue;
+        }
+        seenNames[key] = true;
+        
+// Smart Enrichment (if enabled)
+if(STATE.smartEnrich){
+  log('  🔍 Enriching: ' + row.company, 'info');
+  try {
+    row = await smartEnrichRow(row);
+  } catch(e){
+    log('  ⚠ Enrich failed: ' + e.message, 'warn');
+  }
+}
+
+        STATE.results.push(row);
+        added++;
+      }
+
+      log('✅ ' + src.name + ': ' + added + ' valid', 'ok');
+      addUsage(src.key, data.length);
+      updateProgress(STATE.results.length, targetCount, skippedCount);
+
+      await sleep(500);
+    } catch(e){
+      log('❌ ' + src.name + ': ' + (e.message || 'Error'), 'err');
+      continue;
+    }
+  }
+
+  log('🎉 Collection complete! Total: ' + STATE.results.length, 'ok');
+  log('📊 Skipped: ' + skippedCount + ' invalid/duplicate', 'info');
+
+// Save to Master List (Firebase)
+if(STATE.results.length > 0){
+  log('💾 Saving to Master List...', 'info');
+  try {
+    var masterResult = await saveResultsToMaster(STATE.results);
+    log('✅ Master List: ' + masterResult.saved + ' new, ' + masterResult.skipped + ' duplicates', 'ok');
+    renderMasterStats();
+    renderSearchHistory();
+  } catch(e){
+    log('⚠ Master List save failed: ' + e.message, 'warn');
+  }
+}
+
+  document.getElementById('btn_start').disabled = false;
+  saveResults();
+  renderResults();
+  switchTab('results');
+}
+    
+function saveResults(){
+  try {
+    lsSet('sh_col_results', STATE.results);
+  } catch(e){
+    console.warn('Save failed:', e);
+  }
+  }
+  // ==================== APIFY RUNNER ====================
+async function runApify(query, max){
+  var filters = STATE.activeFilters || {};
+
+  // Build Apify request body
+  var apifyBody = {
+    searchStringsArray: [query],
+    maxCrawledPlacesPerSearch: max,
+    language: 'en',
+    skipClosedPlaces: true
+  };
+
+  // Add minimum rating filter if set
+  if(filters.minRating && filters.minRating > 0){
+    apifyBody.minimumStars = filters.minRating;
+    log('  ⭐ Rating filter: ' + filters.minRating + '+', 'info');
+  }
+
+  // START RUN via Worker
+  var startRes = await fetch(WORKER_URL + '/apify/start', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(apifyBody)
+  });
+
+  if(startRes.status === 401) throw new Error('Invalid Apify token');
+  if(startRes.status === 402) throw new Error('Apify credits exhausted');
+  if(startRes.status === 429) throw new Error('Apify rate limit — try again later');
+  if(!startRes.ok) throw new Error('Apify start failed (' + startRes.status + ')');
+
+  var startData = await startRes.json();
+  if(!startData || !startData.data || !startData.data.id){
+    throw new Error('Apify response is invalid');
+  }
+
+  var runId = startData.data.id;
+  log('  ⏳ Apify run: ' + runId.slice(0, 8), 'info');
+
+  // Poll for completion (max 5 min)
+  for(var i = 0; i < 60; i++){
+    if(STATE.stopped) throw new Error('Stopped by user');
+    await sleep(5000);
+
+    var sr = await fetch(WORKER_URL + '/apify/status?runId=' + runId);
+    if(!sr.ok) continue;
+
+    var sd = await sr.json();
+    var st = sd.data && sd.data.status;
+
+    if(st === 'SUCCEEDED'){
+      var datasetId = sd.data.defaultDatasetId;
+      var dr = await fetch(WORKER_URL + '/apify/dataset?datasetId=' + datasetId);
+      if(!dr.ok) throw new Error('Failed to fetch Apify dataset');
+      var items = await dr.json();
+      if(!Array.isArray(items)) return [];
+      return items.map(mapApifyItem);
+    }
+
+    if(st === 'FAILED' || st === 'ABORTED'){
+      throw new Error('Apify run ' + st);
+    }
+
+    log('  ⏳ Apify status: ' + st);
+  }
+
+  throw new Error('Apify timeout (5 min)');
+  }
+
+function mapApifyItem(it){
+  return {
+    company: it.title || it.name || '',
+    contact: '',
+    email: it.email || '',
+    phone: it.phone || it.phoneUnformatted || '',
+    location: it.city || it.state || '',
+    address: it.address || it.street || '',
+    employees: it.employees || '',
+    website: it.website || '',
+    industry: it.categoryName || '',
+    rating: it.totalScore || '',
+    category: it.categoryName || '',
+    founded: ''
+  };
+}
+
+// ==================== GOOGLE PLACES RUNNER ====================
+async function runGPlaces(query, max){
+  // Call Worker /gplaces endpoint (no key needed)
+  var url = WORKER_URL + '/gplaces?query=' + encodeURIComponent(query);
+
+  var res = await fetch(url);
+  if(!res.ok) throw new Error('Google Places HTTP ' + res.status);
+
+  var data = await res.json();
+
+  if(data.status === 'REQUEST_DENIED'){
+    throw new Error('API not enabled — Enable Places API in Google Cloud Console');
+  }
+  if(data.status === 'OVER_QUERY_LIMIT'){
+    throw new Error('Google Places quota exhausted');
+  }
+  if(data.status === 'INVALID_REQUEST'){
+    throw new Error('Invalid request — check your query');
+  }
+  if(data.status !== 'OK' && data.status !== 'ZERO_RESULTS'){
+    throw new Error('Google Places: ' + data.status);
+  }
+
+  var results = data.results || [];
+  var allResults = results.slice();
+
+  // Pagination — fetch next page if needed
+  if(results.length > 0 && max > results.length && data.next_page_token){
+    await sleep(2500);
+
+    try {
+      var nextUrl = WORKER_URL + '/gplaces?query=' + encodeURIComponent(query) + '&pageToken=' + data.next_page_token;
+      var res2 = await fetch(nextUrl);
+      var data2 = await res2.json();
+      if(data2.status === 'OK' && data2.results){
+        allResults = allResults.concat(data2.results);
+      }
+    } catch(e){
+      console.warn('Pagination failed:', e.message);
+    }
+  }
+
+  return allResults.slice(0, max).map(function(it){
+    return {
+      company: it.name || '',
+      contact: '',
+      email: '',
+      phone: '',
+      location: it.formatted_address ? it.formatted_address.split(',').slice(-3).join(',').trim() : '',
+      address: it.formatted_address || '',
+      employees: '',
+      website: '',
+      industry: '',
+      rating: it.rating || '',
+      category: (it.types && it.types[0]) || '',
+      founded: ''
+    };
+  });
+  }
+
+// ==================== SERPAPI RUNNER ====================
+async function runSerp(query, max){
+  // Call Worker /serp endpoint (no key needed)
+  var url = WORKER_URL + '/serp?query=' + encodeURIComponent(query) + '&num=' + Math.min(max, 20);
+
+  var res = await fetch(url);
+
+  if(res.status === 401) throw new Error('Invalid SerpAPI key');
+  if(res.status === 429) throw new Error('SerpAPI rate limit — try again later');
+  if(res.status === 402) throw new Error('SerpAPI quota exhausted');
+  if(!res.ok) throw new Error('SerpAPI HTTP ' + res.status);
+
+  var data = await res.json();
+  if(data.error) throw new Error('SerpAPI: ' + data.error);
+
+  var results = data.local_results || [];
+
+  return results.map(function(it){
+    return {
+      company: it.title || '',
+      contact: '',
+      email: '',
+      phone: it.phone || '',
+      location: it.address ? it.address.split(',').slice(-3).join(',').trim() : '',
+      address: it.address || '',
+      employees: '',
+      website: it.website || '',
+      industry: '',
+      rating: it.rating || '',
+      category: it.type || '',
+      founded: ''
+    };
+  });
+  }
+
+// ==================== APOLLO RUNNER ====================
+async function runApollo(industry, city, max){
+  var filters = STATE.activeFilters || {};
+
+  // Build Apollo request body (no api_key — Worker will add)
+  var apolloBody = {
+    q_organization_keyword_tags: [industry],
+    organization_locations: [city],
+    page: 1,
+    per_page: Math.min(max, 25)
+  };
+
+  // Add employee size range if filter set
+  if(filters.sizeMin > 1 || filters.sizeMax < 999999){
+    apolloBody.organization_num_employees_ranges = [filters.sizeMin + ',' + filters.sizeMax];
+    log('  📏 Size filter: ' + filters.sizeMin + '-' + filters.sizeMax + ' employees', 'info');
+  }
+
+  // Call Worker /apollo endpoint (no key needed)
+  var res = await fetch(WORKER_URL + '/apollo', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(apolloBody)
+  });
+
+  if(res.status === 401) throw new Error('Invalid Apollo key');
+  if(res.status === 403) throw new Error('Apollo API access denied (plan issue)');
+  if(res.status === 429) throw new Error('Apollo rate limit — try again later');
+  if(!res.ok) throw new Error('Apollo HTTP ' + res.status);
+
+  var data = await res.json();
+  if(data.error) throw new Error('Apollo: ' + data.error);
+
+  var orgs = data.organizations || data.accounts || [];
+
+  return orgs.map(function(it){
+    return {
+      company: it.name || '',
+      contact: '',
+      email: '',
+      phone: it.phone || it.sanitized_phone || '',
+      location: it.city || it.state || '',
+      address: it.street_address || '',
+      employees: it.estimated_num_employees || '',
+      website: it.website_url || '',
+      industry: it.industry || '',
+      rating: '',
+      category: '',
+      founded: it.founded_year || ''
+    };
+  });
+  }
+  
+  // ==================== RESULTS RENDER ====================
+function renderResults(){
+  var tb = document.getElementById('resultBody');
+  if(!tb) return;
+  tb.innerHTML = '';
+
+  var filtered = getFilteredResults();
+
+  if(filtered.length === 0){
+    document.getElementById('emptyMsg').style.display = 'block';
+    document.getElementById('emptyMsg').textContent = STATE.results.length === 0
+      ? 'No results yet. Go to Search tab and start collection.'
+      : 'No matching results';
+    document.getElementById('counter').textContent = '0 of ' + STATE.results.length;
+    document.getElementById('pagination').innerHTML = '';
+    return;
+  }
+
+  document.getElementById('emptyMsg').style.display = 'none';
+
+  // Pagination
+  var totalPages = Math.ceil(filtered.length / STATE.perPage);
+  if(STATE.currentPage > totalPages) STATE.currentPage = 1;
+
+  var start = (STATE.currentPage - 1) * STATE.perPage;
+  var pageItems = filtered.slice(start, start + STATE.perPage);
+
+  var html = '';
+  for(var i = 0; i < pageItems.length; i++){
+    var r = pageItems[i];
+    var globalIdx = STATE.results.indexOf(r);
+    var isEditing = (STATE.editingIdx === globalIdx);
+    var isSelected = STATE.selected[globalIdx] === true;
+
+    var rowClass = '';
+    if(isSelected) rowClass = 'selected';
+    if(isEditing) rowClass = 'editing';
+
+    html += '<tr data-idx="' + globalIdx + '"' + (rowClass ? ' class="' + rowClass + '"' : '') + '>';
+
+    html += '<td><input type="checkbox" class="chk" ' + (isSelected ? 'checked' : '') + ' onchange="toggleRow(' + globalIdx + ',this.checked)"></td>';
+
+    if(isEditing){
+      html += '<td><input type="text" data-idx="' + globalIdx + '" data-field="company" value="' + escAttr(r.company) + '"></td>';
+      html += '<td><input type="text" data-idx="' + globalIdx + '" data-field="contact" value="' + escAttr(r.contact) + '"></td>';
+      html += '<td><input type="text" data-idx="' + globalIdx + '" data-field="email" value="' + escAttr(r.email) + '"></td>';
+      html += '<td><input type="text" data-idx="' + globalIdx + '" data-field="phone" value="' + escAttr(r.phone) + '"></td>';
+      html += '<td><input type="text" data-idx="' + globalIdx + '" data-field="location" value="' + escAttr(r.location) + '"></td>';
+      html += '<td><input type="text" data-idx="' + globalIdx + '" data-field="address" value="' + escAttr(r.address) + '"></td>';
+      html += '<td><input type="text" data-idx="' + globalIdx + '" data-field="employees" value="' + escAttr(r.employees) + '"></td>';
+      html += '<td>' + esc(r.source || '') + '</td>';
+      html += '<td><button class="green sm" onclick="saveEdit(' + globalIdx + ')">✓</button> <button class="sm" onclick="cancelEdit()">✕</button></td>';
+    } else {
+      html += '<td>' + esc(r.company) + '</td>';
+      html += '<td>' + esc(r.contact) + '</td>';
+      html += '<td>' + esc(r.email) + '</td>';
+      html += '<td>' + esc(r.phone) + '</td>';
+      html += '<td>' + esc(r.location) + '</td>';
+      html += '<td>' + esc(r.address) + '</td>';
+      html += '<td>' + esc(r.employees) + '</td>';
+      html += '<td>' + esc(r.source || '') + '</td>';
+      html += '<td><button class="blue sm" onclick="startEdit(' + globalIdx + ')" title="Edit">✏️</button> <button class="red sm" onclick="deleteRow(' + globalIdx + ')" title="Delete">❌</button></td>';
+    }
+
+    html += '</tr>';
+  }
+
+  tb.innerHTML = html;
+  document.getElementById('counter').textContent = filtered.length + ' of ' + STATE.results.length;
+
+  // Update select-all checkbox
+  var allSelected = pageItems.length > 0 && pageItems.every(function(r){
+    return STATE.selected[STATE.results.indexOf(r)] === true;
+  });
+  var chkAll = document.getElementById('chkAll');
+  if(chkAll) chkAll.checked = allSelected;
+
+  renderPagination(totalPages);
+}
+
+// ==================== PAGINATION ====================
+function renderPagination(totalPages){
+  var el = document.getElementById('pagination');
+  if(!el) return;
+
+  if(totalPages <= 1){ el.innerHTML = ''; return; }
+
+  var html = '<button ' + (STATE.currentPage === 1 ? 'disabled' : '') + ' onclick="gotoPage(1)">« First</button>';
+  html += '<button ' + (STATE.currentPage === 1 ? 'disabled' : '') + ' onclick="gotoPage(' + (STATE.currentPage - 1) + ')">‹ Prev</button>';
+  html += '<span class="info">Page ' + STATE.currentPage + ' / ' + totalPages + '</span>';
+  html += '<button ' + (STATE.currentPage === totalPages ? 'disabled' : '') + ' onclick="gotoPage(' + (STATE.currentPage + 1) + ')">Next ›</button>';
+  html += '<button ' + (STATE.currentPage === totalPages ? 'disabled' : '') + ' onclick="gotoPage(' + totalPages + ')">Last »</button>';
+
+  el.innerHTML = html;
+}
+
+function gotoPage(n){
+  STATE.currentPage = n;
+  renderResults();
+}
+
+// ==================== FILTER + SORT ====================
+function getFilteredResults(){
+  var filterText = (document.getElementById('searchBox').value || '').toLowerCase().trim();
+  var filterSource = document.getElementById('filterSource').value || '';
+  var sortBy = document.getElementById('sortBy').value || '';
+
+  var arr = STATE.results.slice();
+
+  // Text search filter
+  if(filterText){
+    arr = arr.filter(function(r){
+      var hay = ((r.company || '') + ' ' + (r.contact || '') + ' ' + (r.email || '') + ' ' +
+                 (r.phone || '') + ' ' + (r.location || '') + ' ' + (r.address || '')).toLowerCase();
+      return hay.indexOf(filterText) !== -1;
+    });
+  }
+
+  // Source filter
+  if(filterSource){
+    arr = arr.filter(function(r){ return r.source === filterSource; });
+  }
+
+  // Sort
+  if(sortBy === 'name'){
+    arr.sort(function(a, b){ return (a.company || '').localeCompare(b.company || ''); });
+  } else if(sortBy === 'loc'){
+    arr.sort(function(a, b){ return (a.location || '').localeCompare(b.location || ''); });
+  } else if(sortBy === 'emp'){
+    arr.sort(function(a, b){
+      var ea = parseInt(a.employees, 10) || 0;
+      var eb = parseInt(b.employees, 10) || 0;
+      return eb - ea;
+    });
+  }
+
+  return arr;
+}
+
+// Debounced search (300ms delay)
+function debouncedFilter(){
+  if(STATE.debounceTimer) clearTimeout(STATE.debounceTimer);
+  STATE.debounceTimer = setTimeout(function(){
+    STATE.currentPage = 1;
+    renderResults();
+  }, 300);
+}
+
+function applyFilter(){
+  STATE.currentPage = 1;
+  renderResults();
+}
+
+// ==================== ROW SELECTION ====================
+function toggleRow(idx, checked){
+  if(checked) STATE.selected[idx] = true;
+  else delete STATE.selected[idx];
+  renderResults();
+}
+
+function toggleSelectAll(checked){
+  var filtered = getFilteredResults();
+  var start = (STATE.currentPage - 1) * STATE.perPage;
+  var pageItems = filtered.slice(start, start + STATE.perPage);
+
+  pageItems.forEach(function(r){
+    var idx = STATE.results.indexOf(r);
+    if(checked) STATE.selected[idx] = true;
+    else delete STATE.selected[idx];
+  });
+  renderResults();
+}
+
+// ==================== EDIT ====================
+function startEdit(idx){
+  STATE.editingIdx = idx;
+  renderResults();
+  setTimeout(function(){
+    var inp = document.querySelector('input[data-idx="' + idx + '"][data-field="company"]');
+    if(inp){
+      inp.focus();
+      inp.select();
+    }
+  }, 50);
+}
+
+function saveEdit(idx){
+  var inputs = document.querySelectorAll('input[data-idx="' + idx + '"][data-field]');
+  inputs.forEach(function(inp){
+    var field = inp.getAttribute('data-field');
+    STATE.results[idx][field] = inp.value.trim();
+  });
+  STATE.editingIdx = null;
+  saveResults();
+  renderResults();
+}
+
+function cancelEdit(){
+  STATE.editingIdx = null;
+  renderResults();
+}
+
+// ==================== DELETE ====================
+function deleteRow(idx){
+  var row = STATE.results[idx];
+  if(!row) return;
+  if(!confirm('Delete "' + (row.company || 'this row') + '"?')) return;
+  STATE.results.splice(idx, 1);
+  STATE.selected = {};
+  STATE.editingIdx = null;
+  saveResults();
+  renderResults();
+}
+
+function deleteSelected(){
+  var count = Object.keys(STATE.selected).length;
+  if(count === 0){ alert('No rows selected'); return; }
+  if(!confirm('Delete ' + count + ' selected row(s)?')) return;
+
+  var newArr = [];
+  for(var i = 0; i < STATE.results.length; i++){
+    if(!STATE.selected[i]) newArr.push(STATE.results[i]);
+  }
+  STATE.results = newArr;
+  STATE.selected = {};
+  STATE.editingIdx = null;
+  saveResults();
+  renderResults();
+}
+
+function deleteAll(){
+  if(STATE.results.length === 0) return;
+  if(!confirm('Delete ALL ' + STATE.results.length + ' rows?')) return;
+  if(!confirm('Are you sure? This cannot be undone.')) return;
+  STATE.results = [];
+  STATE.selected = {};
+  STATE.editingIdx = null;
+  saveResults();
+  renderResults();
+}
+
+// ==================== MANUAL ADD ====================
+function openManualAdd(){
+  var body = '<h3>➕ Add Company Manually</h3>' +
+    '<div class="field"><label>Company Name *</label><input id="ma_company" placeholder="Company name"></div>' +
+    '<div class="grid2">' +
+      '<div class="field"><label>Contact Person</label><input id="ma_contact" placeholder="HR name"></div>' +
+      '<div class="field"><label>Phone</label><input id="ma_phone" placeholder="+91..." type="tel"></div>' +
+    '</div>' +
+    '<div class="field"><label>Email</label><input id="ma_email" placeholder="hr@company.com" type="email"></div>' +
+    '<div class="grid2">' +
+      '<div class="field"><label>Location</label><input id="ma_location" placeholder="City"></div>' +
+      '<div class="field"><label>Employees</label><input id="ma_employees" placeholder="e.g. 500" type="number"></div>' +
+    '</div>' +
+    '<div class="field"><label>Address</label><input id="ma_address" placeholder="Full address"></div>' +
+    '<div class="field"><label>Website</label><input id="ma_website" placeholder="example.com"></div>' +
+    '<div class="field"><label>Industry</label><input id="ma_industry" placeholder="e.g. IT"></div>' +
+    '<div id="ma_err" class="sub hide" style="color:#fca5a5;font-size:12px"></div>' +
+    '<div class="row" style="margin-top:16px"><button style="flex:1" onclick="closeModal()">Cancel</button><button class="gold" style="flex:1" onclick="submitManualAdd()">Add Company</button></div>';
+  showModal('Add Company Manually', body);
+}
+
+function submitManualAdd(){
+  var company = document.getElementById('ma_company').value.trim();
+  var err = document.getElementById('ma_err');
+  err.classList.add('hide');
+
+  if(!company){ err.textContent = 'Company name is required'; err.classList.remove('hide'); return; }
+
+  // Duplicate check
+  var norm = normalizeName(company);
+  for(var i = 0; i < STATE.results.length; i++){
+    if(normalizeName(STATE.results[i].company) === norm){
+      err.textContent = '⚠️ This company already exists'; err.classList.remove('hide');
+      return;
+    }
+  }
+
+  var row = {
+    company: company,
+    contact: document.getElementById('ma_contact').value.trim(),
+    email: document.getElementById('ma_email').value.trim(),
+    phone: document.getElementById('ma_phone').value.trim(),
+    location: document.getElementById('ma_location').value.trim(),
+    address: document.getElementById('ma_address').value.trim(),
+    employees: document.getElementById('ma_employees').value.trim(),
+    website: document.getElementById('ma_website').value.trim(),
+    industry: document.getElementById('ma_industry').value.trim(),
+    rating: '',
+    category: '',
+    founded: '',
+    source: 'manual'
+  };
+
+  STATE.results.push(row);
+  saveResults();
+  closeModal();
+  renderResults();
+  alert('✅ Company added successfully');
+}
+
+// ==================== LOAD SAVED RESULTS ====================
+function loadSavedResults(){
+  var saved = lsGet('sh_col_results', null);
+  if(saved && Array.isArray(saved) && saved.length > 0){
+    STATE.results = saved;
+  }
+      }
+  // ==================== EXPORT: CSV (ALL) ====================
+function exportCSV(){
+  if(STATE.results.length === 0){ alert('No data to export'); return; }
+  var csv = 'Company Name,Contact Person,Email,Phone,Location,Address,Employees,Website,Industry,Rating,Category,Founded,Source\n';
+  STATE.results.forEach(function(r){
+    csv += [r.company, r.contact, r.email, r.phone, r.location, r.address, r.employees, r.website, r.industry, r.rating, r.category, r.founded, r.source]
+      .map(function(x){ return '"' + String(x || '').replace(/"/g, '""') + '"'; }).join(',') + '\n';
+  });
+  download(csv, 'companies-' + Date.now() + '.csv', 'text/csv');
+  addUsageLog('export_csv', STATE.results.length);
+}
+
+// ==================== EXPORT: CSV (SELECTED) ====================
+function exportSelectedCSV(){
+  var sel = getSelectedRows();
+  if(sel.length === 0){ alert('No rows selected'); return; }
+  var csv = 'Company Name,Contact Person,Email,Phone,Location,Address,Employees,Website,Industry,Rating,Category,Founded,Source\n';
+  sel.forEach(function(r){
+    csv += [r.company, r.contact, r.email, r.phone, r.location, r.address, r.employees, r.website, r.industry, r.rating, r.category, r.founded, r.source]
+      .map(function(x){ return '"' + String(x || '').replace(/"/g, '""') + '"'; }).join(',') + '\n';
+  });
+  download(csv, 'selected-' + Date.now() + '.csv', 'text/csv');
+  addUsageLog('export_selected', sel.length);
+}
+
+// ==================== EXPORT: EXCEL ====================
+function exportExcel(){
+  if(STATE.results.length === 0){ alert('No data to export'); return; }
+  try {
+    var data = STATE.results.map(function(r){
+      return {
+        'Company Name': r.company,
+        'Contact Person': r.contact,
+        'Email': r.email,
+        'Phone': r.phone,
+        'Location': r.location,
+        'Address': r.address,
+        'Employees': r.employees,
+        'Website': r.website,
+        'Industry': r.industry,
+        'Rating': r.rating,
+        'Category': r.category,
+        'Founded': r.founded,
+        'Source': r.source
+      };
+    });
+    var ws = XLSX.utils.json_to_sheet(data);
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Companies');
+    XLSX.writeFile(wb, 'companies-' + Date.now() + '.xlsx');
+    addUsageLog('export_excel', STATE.results.length);
+  } catch(e){
+    alert('❌ Excel export failed: ' + e.message);
+  }
+}
+
+// ==================== EXPORT HELPERS ====================
+function getSelectedRows(){
+  var arr = [];
+  Object.keys(STATE.selected).forEach(function(k){
+    var idx = parseInt(k, 10);
+    if(STATE.results[idx]) arr.push(STATE.results[idx]);
+  });
+  return arr;
+}
+
+function download(content, filename, type){
+  var blob = new Blob([content], { type: type });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+}
+
+function addUsageLog(action, count){
+  var log = lsGet('sh_col_actionlog', []);
+  log.unshift({ action: action, count: count, time: Date.now() });
+  log = log.slice(0, 50);
+  lsSet('sh_col_actionlog', log);
+}
+
+// ==================== KEYBOARD SHORTCUTS ====================
+document.addEventListener('keydown', function(e){
+  // Ctrl+S = save edit
+  if(STATE.editingIdx !== null && (e.ctrlKey || e.metaKey) && e.key === 's'){
+    e.preventDefault();
+    saveEdit(STATE.editingIdx);
+    return;
+  }
+  // Escape = close modal OR cancel edit
+  if(e.key === 'Escape'){
+    var modalBg = document.getElementById('modalBg');
+    var modalOpen = modalBg && !modalBg.classList.contains('hide');
+    if(modalOpen) closeModal();
+    else if(STATE.editingIdx !== null) cancelEdit();
+    return;
+  }
+  // Ctrl+F = focus search (if results tab visible)
+  if((e.ctrlKey || e.metaKey) && e.key === 'f'){
+    var searchBox = document.getElementById('searchBox');
+    var resultsPane = document.getElementById('pane-results');
+    if(searchBox && resultsPane && resultsPane.classList.contains('active')){
+      e.preventDefault();
+      searchBox.focus();
+      searchBox.select();
+    }
+  }
+});
+
+// ==================== OUTSIDE CLICK HANDLER ====================
+document.addEventListener('click', function(e){
+  // Close any open dropdowns (future-proof)
+  var menus = document.querySelectorAll('.dropdown-menu:not(.hide)');
+  menus.forEach(function(m){
+    if(!e.target.closest('.dropdown')) m.classList.add('hide');
+  });
+});
+  
+// ==================== ENRICHMENT: STATE ====================
+STATE.enrich = {
+  rawRows: [],          // Parsed input rows
+  results: [],          // Enriched results (matched + rejected)
+  matched: 0,
+  rejected: 0,
+  stopped: false,
+  threshold: 80,        // Minimum score to accept
+  currentPage: 1,
+  perPage: 50,
+  filterText: '',
+  filterStatus: '',
+  debounceTimer: null,
+  fileName: ''
+};
+
+// ==================== ENRICHMENT: THRESHOLD ====================
+function selectThreshold(val){
+  STATE.enrich.threshold = parseInt(val, 10);
+  document.querySelectorAll('.pill[data-threshold]').forEach(function(p){ p.classList.remove('on'); });
+  var target = document.querySelector('.pill[data-threshold="' + val + '"]');
+  if(target) target.classList.add('on');
+}
+
+// ==================== ENRICHMENT: FILE HANDLER ====================
+function handleEnrichFile(event){
+  var file = event.target.files[0];
+  if(!file) return;
+
+  var info = document.getElementById('enrichFileInfo');
+  info.textContent = 'Reading file...';
+  info.style.color = '#a1a1aa';
+
+  // Check size (5MB max)
+  if(file.size > 5 * 1024 * 1024){
+    info.textContent = '❌ File too large (max 5MB)';
+    info.style.color = '#fca5a5';
+    return;
+  }
+
+  STATE.enrich.fileName = file.name;
+  var fileName = file.name.toLowerCase();
+  var reader = new FileReader();
+
+  reader.onload = function(e){
+    try {
+      var rows = [];
+      if(fileName.indexOf('.csv') !== -1 || fileName.indexOf('.txt') !== -1){
+        rows = parseCSV(e.target.result);
+      } else if(fileName.indexOf('.xlsx') !== -1 || fileName.indexOf('.xls') !== -1){
+        rows = parseExcel(e.target.result);
+      } else {
+        info.textContent = '❌ Unsupported file type';
+        info.style.color = '#fca5a5';
+        return;
+      }
+
+      if(rows.length === 0){
+        info.textContent = '❌ No data found in file';
+        info.style.color = '#fca5a5';
+        return;
+      }
+
+      STATE.enrich.rawRows = rows;
+      info.textContent = '✅ Loaded ' + rows.length + ' rows from ' + file.name;
+      info.style.color = '#6ee7b7';
+
+      var btn = document.getElementById('btn_enrich');
+      if(btn) btn.disabled = false;
+
+    } catch(err){
+      console.error(err);
+      info.textContent = '❌ Error: ' + err.message;
+      info.style.color = '#fca5a5';
+    }
+  };
+
+  reader.onerror = function(){
+    info.textContent = '❌ Failed to read file';
+    info.style.color = '#fca5a5';
+  };
+
+  if(fileName.indexOf('.csv') !== -1 || fileName.indexOf('.txt') !== -1){
+    reader.readAsText(file);
+  } else {
+    reader.readAsArrayBuffer(file);
+  }
+}
+
+// ==================== PARSE CSV / TXT ====================
+function parseCSV(text){
+  var lines = text.split(/\r?\n/).filter(function(l){ return l.trim().length > 0; });
+  if(lines.length < 2) return [];
+
+  // Detect delimiter (comma, tab, semicolon)
+  var firstLine = lines[0];
+  var delim = ',';
+  if(firstLine.indexOf('\t') > -1) delim = '\t';
+  else if(firstLine.indexOf(';') > -1) delim = ';';
+
+  var headers = splitCSVLine(lines[0], delim).map(function(h){ return h.trim(); });
+  var rows = [];
+
+  for(var i = 1; i < lines.length; i++){
+    var vals = splitCSVLine(lines[i], delim);
+    var row = {};
+    for(var j = 0; j < headers.length; j++){
+      row[headers[j]] = (vals[j] || '').trim().replace(/^"|"$/g, '');
+    }
+    rows.push(row);
+  }
+  return rows;
+}
+
+function splitCSVLine(line, delim){
+  var result = [];
+  var current = '';
+  var inQuotes = false;
+  for(var i = 0; i < line.length; i++){
+    var ch = line[i];
+    if(ch === '"'){
+      if(inQuotes && line[i+1] === '"'){ current += '"'; i++; }
+      else inQuotes = !inQuotes;
+    } else if(ch === delim && !inQuotes){
+      result.push(current);
+      current = '';
+    } else {
+      current += ch;
+    }
+  }
+  result.push(current);
+  return result;
+}
+
+// ==================== PARSE EXCEL ====================
+function parseExcel(arrayBuffer){
+  try {
+    var workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
+    var firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+    var data = XLSX.utils.sheet_to_json(firstSheet, { defval: '' });
+    return data.map(function(row){
+      var clean = {};
+      Object.keys(row).forEach(function(k){
+        clean[k] = String(row[k] || '').trim();
+      });
+      return clean;
+    });
+  } catch(e){
+    throw new Error('Excel read failed: ' + e.message);
+  }
+}
+
+// ==================== ENRICHMENT: FIELD DETECTION ====================
+function detectEnrichColumns(headers){
+  var map = { name:null, phone:null, email:null, website:null, location:null, address:null, employees:null, industry:null, contact:null };
+
+  var aliases = {
+    name: ['name','company name','companyname','company','firm','organization','organization name'],
+    phone: ['phone','mobile','contact no','phone no','mobile no','contact number','phonenumber','telephone','tel'],
+    email: ['email','email id','mail','contact email','e-mail','email address','emailid'],
+    website: ['website','url','domain','web','site','website url','homepage'],
+    location: ['location','city','area','region','place','district'],
+    address: ['address','full address','street','office address'],
+    employees: ['employees','employee count','size','no of employees','number of employees','emp count','staff'],
+    industry: ['industry','sector','category','type','business type'],
+    contact: ['contact person','contact','person','hr','hr name','manager','poc']
+  };
+
+  var lowerHeaders = {};
+  headers.forEach(function(h){ lowerHeaders[h.toLowerCase().trim()] = h; });
+
+  Object.keys(aliases).forEach(function(field){
+    for(var i = 0; i < aliases[field].length; i++){
+      var alias = aliases[field][i];
+      if(lowerHeaders[alias]){ map[field] = lowerHeaders[alias]; return; }
+    }
+    // Partial match fallback
+    for(var j = 0; j < aliases[field].length; j++){
+      var partial = aliases[field][j];
+      for(var k = 0; k < headers.length; k++){
+        if(headers[k].toLowerCase().indexOf(partial) !== -1){
+          map[field] = headers[k];
+          return;
+        }
+      }
+    }
+  });
+
+  return map;
+  }
+
+// ==================== ENRICHMENT: NORMALIZE HELPERS ====================
+function normalizeForMatch(str){
+  return String(str || '').toLowerCase()
+    .replace(/\b(pvt|ltd|limited|private|co|inc|llp|corporation|corp|company|india|technologies|tech|solutions|services|group|enterprises)\b/g, '')
+    .replace(/[.,\-&()\/]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function extractDomain(url){
+  if(!url) return '';
+  var u = String(url).toLowerCase().trim();
+  u = u.replace(/^https?:\/\//, '').replace(/^www\./, '');
+  u = u.split('/')[0].split('?')[0].split('#')[0];
+  return u;
+}
+
+function extractEmailDomain(email){
+  if(!email) return '';
+  var parts = String(email).toLowerCase().split('@');
+  return parts.length > 1 ? parts[1].trim() : '';
+}
+
+function extractPhoneDigits(phone){
+  if(!phone) return '';
+  var d = String(phone).replace(/\D/g, '');
+  return d.length >= 10 ? d.slice(-10) : d;
+}
+
+// ==================== ENRICHMENT: SCORING ====================
+function calculateMatchScore(input, candidate){
+  var score = 0;
+  var matches = [];
+
+  // 1. Website domain (strongest — +30)
+  var inDomain = extractDomain(input.website);
+  var caDomain = extractDomain(candidate.website);
+  if(inDomain && caDomain && inDomain === caDomain){
+    score += 30;
+    matches.push('website');
+  }
+
+  // 2. Phone (+25)
+  var inPhone = extractPhoneDigits(input.phone);
+  var caPhone = extractPhoneDigits(candidate.phone);
+  if(inPhone && caPhone && inPhone === caPhone){
+    score += 25;
+    matches.push('phone');
+  }
+
+  // 3. Email domain (+25)
+  var inEmailDom = extractEmailDomain(input.email);
+  var caEmailDom = extractEmailDomain(candidate.email);
+  if(inEmailDom && caEmailDom && inEmailDom === caEmailDom){
+    score += 25;
+    matches.push('email');
+  }
+
+  // 4. Company name (+40 for exact, +20 for partial)
+  var inName = normalizeForMatch(input.company);
+  var caName = normalizeForMatch(candidate.company);
+  if(inName && caName){
+    if(inName === caName){
+      score += 40;
+      matches.push('name-exact');
+    } else if(inName.length > 3 && caName.length > 3){
+      if(caName.indexOf(inName) !== -1 || inName.indexOf(caName) !== -1){
+        score += 20;
+        matches.push('name-partial');
+      }
+    }
+  }
+
+  // 5. City/Location (+15)
+  var inLoc = String(input.location || '').toLowerCase().trim();
+  var caLoc = String(candidate.location || '').toLowerCase().trim();
+  if(inLoc && caLoc && (inLoc === caLoc || caLoc.indexOf(inLoc) !== -1 || inLoc.indexOf(caLoc) !== -1)){
+    score += 15;
+    matches.push('location');
+  }
+
+  // 6. Address (+15)
+  var inAddr = normalizeForMatch(input.address);
+  var caAddr = normalizeForMatch(candidate.address);
+  if(inAddr && caAddr && inAddr.length > 5){
+    if(caAddr.indexOf(inAddr) !== -1 || inAddr.indexOf(caAddr) !== -1){
+      score += 15;
+      matches.push('address');
+    }
+  }
+
+  // Rule: At least 2 matches required
+  var valid = matches.length >= 2 && score >= STATE.enrich.threshold;
+
+  return { score: Math.min(score, 100), matches: matches, valid: valid };
+}
+
+// ==================== ENRICHMENT: MERGE DATA ====================
+function mergeEnrichedData(input, candidate){
+  // Fill missing fields from candidate; keep input values
+  var merged = {};
+  var allFields = ['company','contact','email','phone','location','address','website','employees','industry','rating','category','founded'];
+
+  allFields.forEach(function(f){
+    var inVal = String(input[f] || '').trim();
+    var caVal = String(candidate[f] || '').trim();
+    merged[f] = inVal || caVal;
+  });
+
+  return merged;
+}
+
+// ==================== ENRICHMENT: SEARCH ONE ROW ====================
+async function searchForEnrichment(input){
+  // Build best query from available fields
+  var query = '';
+
+  if(input.website){
+    var dom = extractDomain(input.website);
+    query = dom;
+  } else if(input.phone){
+    query = input.company + ' ' + input.location;
+  } else if(input.company){
+    query = input.company + (input.location ? ' ' + input.location : '');
+  } else {
+    return null;
+  }
+
+  query = query.trim();
+  if(query.length < 3) return null;
+
+  // Try Google Places first
+  try {
+    if(isOn('gplaces') && hasKey('gplaces')){
+      var results = await runGPlacesSearchForEnrich(query);
+      return results;
+    }
+  } catch(e){
+    console.warn('GPlaces enrich failed:', e.message);
+  }
+
+  // Fallback to Apify
+  try {
+    if(isOn('apify') && hasKey('apify')){
+      var results2 = await runApifySearchForEnrich(query);
+      return results2;
+    }
+  } catch(e){
+    console.warn('Apify enrich failed:', e.message);
+  }
+
+  return [];
+}
+
+// ==================== ENRICHMENT: LIGHT SEARCH ====================
+async function runGPlacesSearchForEnrich(query){
+  // Call Worker /gplaces endpoint (no key needed)
+  var url = WORKER_URL + '/gplaces?query=' + encodeURIComponent(query);
+
+  var res = await fetch(url);
+  if(!res.ok) return [];
+
+  var data = await res.json();
+  if(data.status !== 'OK' && data.status !== 'ZERO_RESULTS') return [];
+
+  return (data.results || []).slice(0, 5).map(function(it){
+    return {
+      company: it.name || '',
+      contact: '',
+      email: '',
+      phone: it.formatted_phone_number || '',
+      location: it.formatted_address ? it.formatted_address.split(',').slice(-3).join(',').trim() : '',
+      address: it.formatted_address || '',
+      website: it.website || '',
+      employees: '',
+      industry: (it.types && it.types[0]) || '',
+      rating: it.rating || '',
+      category: (it.types && it.types[0]) || '',
+      founded: ''
+    };
+  });
+}
+
+async function runApifySearchForEnrich(query){
+  var token = STATE.keys.apify;
+  var startRes = await fetch('https://api.apify.com/v2/acts/compass~crawler-google-places/runs?token=' + token, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      searchStringsArray: [query],
+      maxCrawledPlacesPerSearch: 3,
+      language: 'en',
+      skipClosedPlaces: true
+    })
+  });
+  if(!startRes.ok) return [];
+  var startData = await startRes.json();
+  var runId = startData.data && startData.data.id;
+  if(!runId) return [];
+
+  // Quick poll (max 90 sec for enrichment)
+  for(var i = 0; i < 18; i++){
+    if(STATE.enrich.stopped) return [];
+    await sleep(5000);
+    var sr = await fetch('https://api.apify.com/v2/acts/compass~crawler-google-places/runs/' + runId + '?token=' + token);
+    if(!sr.ok) continue;
+    var sd = await sr.json();
+    var st = sd.data && sd.data.status;
+    if(st === 'SUCCEEDED'){
+      var dr = await fetch('https://api.apify.com/v2/datasets/' + sd.data.defaultDatasetId + '/items?token=' + token);
+      var items = await dr.json();
+      if(!Array.isArray(items)) return [];
+      return items.slice(0, 5).map(mapApifyItem);
+    }
+    if(st === 'FAILED' || st === 'ABORTED') return [];
+  }
+  return [];
+}
+
+// ==================== ENRICHMENT: MAIN PROCESS ====================
+async function startEnrichment(){
+  if(STATE.enrich.rawRows.length === 0){
+    alert('Please upload a file first');
+    return;
+  }
+
+  if(STATE.enrich.results.length > 0){
+    if(!confirm('Clear previous results and start fresh?')) return;
+  }
+
+  STATE.enrich.stopped = false;
+  STATE.enrich.results = [];
+  STATE.enrich.matched = 0;
+  STATE.enrich.rejected = 0;
+  STATE.enrich.currentPage = 1;
+
+  document.getElementById('enrichProgressCard').classList.remove('hide');
+  document.getElementById('enrichResultCard').classList.add('hide');
+  document.getElementById('enrichLogBox').innerHTML = '';
+  document.getElementById('btn_enrich').disabled = true;
+
+  var rows = STATE.enrich.rawRows;
+  var headers = Object.keys(rows[0] || {});
+  var colMap = detectEnrichColumns(headers);
+
+  enrichLog('🚀 Starting enrichment for ' + rows.length + ' rows', 'info');
+  enrichLog('📋 Detected fields: ' + Object.keys(colMap).filter(function(k){ return colMap[k]; }).join(', '), 'info');
+  enrichLog('🎯 Threshold: ' + STATE.enrich.threshold + '+', 'info');
+
+  if(!colMap.name){
+    enrichLog('❌ No "Company Name" column detected', 'err');
+    document.getElementById('btn_enrich').disabled = false;
+    return;
+  }
+
+  var targetTotal = rows.length;
+
+  for(var i = 0; i < rows.length; i++){
+    if(STATE.enrich.stopped) break;
+
+    var raw = rows[i];
+
+    // Map input row to standard fields
+    var input = {
+      company: colMap.name ? String(raw[colMap.name] || '').trim() : '',
+      phone: colMap.phone ? String(raw[colMap.phone] || '').trim() : '',
+      email: colMap.email ? String(raw[colMap.email] || '').trim() : '',
+      website: colMap.website ? String(raw[colMap.website] || '').trim() : '',
+      location: colMap.location ? String(raw[colMap.location] || '').trim() : '',
+      address: colMap.address ? String(raw[colMap.address] || '').trim() : '',
+      employees: colMap.employees ? String(raw[colMap.employees] || '').trim() : '',
+      industry: colMap.industry ? String(raw[colMap.industry] || '').trim() : '',
+      contact: colMap.contact ? String(raw[colMap.contact] || '').trim() : '',
+      source: 'enriched',
+      _original: raw
+    };
+
+    if(!input.company){
+      STATE.enrich.results.push({ status: 'rejected', reason: 'No company name', score: 0, data: input });
+      STATE.enrich.rejected++;
+      updateEnrichProgress(i + 1, targetTotal);
+      continue;
+    }
+
+    enrichLog('🔍 [' + (i + 1) + '/' + rows.length + '] ' + input.company, 'info');
+
+    try {
+      var candidates = await searchForEnrichment(input);
+
+      if(!candidates || candidates.length === 0){
+        STATE.enrich.results.push({ status: 'rejected', reason: 'No matches found', score: 0, data: input });
+        STATE.enrich.rejected++;
+        enrichLog('  ⚠ No results', 'warn');
+      } else {
+        // Score all candidates
+        var bestMatch = null;
+        var bestScore = 0;
+        for(var c = 0; c < candidates.length; c++){
+          var m = calculateMatchScore(input, candidates[c]);
+          if(m.score > bestScore){
+            bestScore = m.score;
+            bestMatch = { candidate: candidates[c], score: m.score, matches: m.matches, valid: m.valid };
+          }
+        }
+
+        if(bestMatch && bestMatch.valid){
+          var merged = mergeEnrichedData(input, bestMatch.candidate);
+          STATE.enrich.results.push({
+            status: 'matched',
+            score: bestMatch.score,
+            matches: bestMatch.matches,
+            data: merged
+          });
+          STATE.enrich.matched++;
+          enrichLog('  ✅ Match: ' + bestScore + '% (' + bestMatch.matches.join(', ') + ')', 'ok');
+        } else if(bestMatch){
+          STATE.enrich.results.push({
+            status: 'rejected',
+            reason: 'Score too low (' + bestScore + '%)',
+            score: bestScore,
+            data: input
+          });
+          STATE.enrich.rejected++;
+          enrichLog('  ⚠ Low score: ' + bestScore + '%', 'warn');
+        } else {
+          STATE.enrich.results.push({ status: 'rejected', reason: 'No valid match', score: 0, data: input });
+          STATE.enrich.rejected++;
+          enrichLog('  ⚠ No valid match', 'warn');
+        }
+      }
+    } catch(e){
+      STATE.enrich.results.push({ status: 'rejected', reason: 'Error: ' + e.message, score: 0, data: input });
+      STATE.enrich.rejected++;
+      enrichLog('  ❌ Error: ' + e.message, 'err');
+    }
+
+    updateEnrichProgress(i + 1, targetTotal);
+    await sleep(300);
+  }
+
+  enrichLog('🎉 Done! Matched: ' + STATE.enrich.matched + ' | Rejected: ' + STATE.enrich.rejected, 'ok');
+  document.getElementById('btn_enrich').disabled = false;
+
+  renderEnrichResults();
+}
+
+// ==================== ENRICHMENT: LOG / PROGRESS ====================
+function enrichLog(msg, type){
+  var box = document.getElementById('enrichLogBox');
+  if(!box) return;
+  var d = document.createElement('div');
+  d.className = type || 'info';
+  d.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg;
+  box.appendChild(d);
+  box.scrollTop = box.scrollHeight;
+  while(box.children.length > 200){
+    box.removeChild(box.firstChild);
+  }
+}
+
+function updateEnrichProgress(cur, total){
+  var pct = total > 0 ? Math.min(100, (cur / total) * 100) : 0;
+  document.getElementById('enrichProgressBar').style.width = pct + '%';
+  document.getElementById('enrichProgressText').textContent = 'Processed: ' + cur + ' / ' + total;
+  document.getElementById('enrichStatTotal').textContent = cur;
+  document.getElementById('enrichStatMatched').textContent = STATE.enrich.matched;
+  document.getElementById('enrichStatRejected').textContent = STATE.enrich.rejected;
+}
+
+function stopEnrichment(){
+  STATE.enrich.stopped = true;
+  enrichLog('⏹ Stopped by user', 'err');
+  }
+  
+// ==================== ENRICHMENT: RENDER RESULTS ====================
+function renderEnrichResults(){
+  var tb = document.getElementById('enrichResultBody');
+  if(!tb) return;
+  tb.innerHTML = '';
+
+  var filtered = getFilteredEnrichResults();
+
+  if(filtered.length === 0){
+    document.getElementById('enrichEmptyMsg').style.display = 'block';
+    document.getElementById('enrichEmptyMsg').textContent = STATE.enrich.results.length === 0
+      ? 'No enrichment results yet.'
+      : 'No matching results';
+    document.getElementById('enrichCounter').textContent = '0 of ' + STATE.enrich.results.length;
+    document.getElementById('enrichPagination').innerHTML = '';
+    return;
+  }
+
+  document.getElementById('enrichEmptyMsg').style.display = 'none';
+
+  var totalPages = Math.ceil(filtered.length / STATE.enrich.perPage);
+  if(STATE.enrich.currentPage > totalPages) STATE.enrich.currentPage = 1;
+
+  var start = (STATE.enrich.currentPage - 1) * STATE.enrich.perPage;
+  var pageItems = filtered.slice(start, start + STATE.enrich.perPage);
+
+  var html = '';
+  pageItems.forEach(function(r){
+    var statusBadge = r.status === 'matched'
+      ? '<span class="badge b-green">✅ Matched</span>'
+      : '<span class="badge b-red">❌ Rejected</span>';
+
+    var scoreColor = r.score >= 80 ? '#6ee7b7' : (r.score >= 50 ? '#fbbf24' : '#fca5a5');
+
+    html += '<tr>';
+    html += '<td>' + statusBadge + '</td>';
+    html += '<td style="color:' + scoreColor + ';font-weight:700">' + r.score + '</td>';
+    html += '<td>' + esc(r.data.company) + '</td>';
+    html += '<td>' + esc(r.data.contact || '-') + '</td>';
+    html += '<td>' + esc(r.data.email || '-') + '</td>';
+    html += '<td>' + esc(r.data.phone || '-') + '</td>';
+    html += '<td>' + esc(r.data.location || '-') + '</td>';
+    html += '<td>' + esc(r.data.employees || '-') + '</td>';
+    html += '<td>' + esc(r.data.industry || '-') + '</td>';
+    html += '</tr>';
+  });
+
+  tb.innerHTML = html;
+  document.getElementById('enrichCounter').textContent = filtered.length + ' of ' + STATE.enrich.results.length;
+  renderEnrichPagination(totalPages);
+  document.getElementById('enrichResultCard').classList.remove('hide');
+}
+
+// ==================== ENRICHMENT: FILTER ====================
+function getFilteredEnrichResults(){
+  var text = STATE.enrich.filterText.toLowerCase();
+  var status = STATE.enrich.filterStatus;
+
+  var arr = STATE.enrich.results.slice();
+
+  if(text){
+    arr = arr.filter(function(r){
+      var hay = ((r.data.company || '') + ' ' + (r.data.email || '') + ' ' + (r.data.phone || '') + ' ' + (r.data.location || '')).toLowerCase();
+      return hay.indexOf(text) !== -1;
+    });
+  }
+
+  if(status){
+    arr = arr.filter(function(r){ return r.status === status; });
+  }
+
+  return arr;
+}
+
+function debouncedEnrichFilter(){
+  if(STATE.enrich.debounceTimer) clearTimeout(STATE.enrich.debounceTimer);
+  STATE.enrich.debounceTimer = setTimeout(function(){
+    STATE.enrich.filterText = document.getElementById('enrichSearchBox').value;
+    STATE.enrich.currentPage = 1;
+    renderEnrichResults();
+  }, 300);
+}
+
+function applyEnrichFilter(){
+  STATE.enrich.filterStatus = document.getElementById('enrichFilterStatus').value;
+  STATE.enrich.filterText = document.getElementById('enrichSearchBox').value;
+  STATE.enrich.currentPage = 1;
+  renderEnrichResults();
+}
+
+// ==================== ENRICHMENT: PAGINATION ====================
+function renderEnrichPagination(totalPages){
+  var el = document.getElementById('enrichPagination');
+  if(!el) return;
+  if(totalPages <= 1){ el.innerHTML = ''; return; }
+
+  var html = '<button ' + (STATE.enrich.currentPage === 1 ? 'disabled' : '') + ' onclick="gotoEnrichPage(1)">« First</button>';
+  html += '<button ' + (STATE.enrich.currentPage === 1 ? 'disabled' : '') + ' onclick="gotoEnrichPage(' + (STATE.enrich.currentPage - 1) + ')">‹ Prev</button>';
+  html += '<span class="info">Page ' + STATE.enrich.currentPage + ' / ' + totalPages + '</span>';
+  html += '<button ' + (STATE.enrich.currentPage === totalPages ? 'disabled' : '') + ' onclick="gotoEnrichPage(' + (STATE.enrich.currentPage + 1) + ')">Next ›</button>';
+  html += '<button ' + (STATE.enrich.currentPage === totalPages ? 'disabled' : '') + ' onclick="gotoEnrichPage(' + totalPages + ')">Last »</button>';
+
+  el.innerHTML = html;
+}
+
+function gotoEnrichPage(n){
+  STATE.enrich.currentPage = n;
+  renderEnrichResults();
+}
+
+// ==================== ENRICHMENT: EXPORT ====================
+function exportEnrichedCSV(){
+  var matched = STATE.enrich.results.filter(function(r){ return r.status === 'matched'; });
+  if(matched.length === 0){ alert('No matched rows to export'); return; }
+
+  var csv = 'Company,Contact,Email,Phone,Location,Address,Website,Employees,Industry,Rating,Category,Founded,Match Score\n';
+  matched.forEach(function(r){
+    var d = r.data;
+    csv += [d.company, d.contact, d.email, d.phone, d.location, d.address, d.website, d.employees, d.industry, d.rating, d.category, d.founded, r.score]
+      .map(function(x){ return '"' + String(x || '').replace(/"/g, '""') + '"'; }).join(',') + '\n';
+  });
+  download(csv, 'enriched-' + Date.now() + '.csv', 'text/csv');
+}
+
+function exportRejectedCSV(){
+  var rejected = STATE.enrich.results.filter(function(r){ return r.status === 'rejected'; });
+  if(rejected.length === 0){ alert('No rejected rows'); return; }
+
+  var csv = 'Company,Contact,Email,Phone,Location,Address,Website,Employees,Industry,Score,Reason\n';
+  rejected.forEach(function(r){
+    var d = r.data;
+    csv += [d.company, d.contact, d.email, d.phone, d.location, d.address, d.website, d.employees, d.industry, r.score, r.reason]
+      .map(function(x){ return '"' + String(x || '').replace(/"/g, '""') + '"'; }).join(',') + '\n';
+  });
+  download(csv, 'rejected-' + Date.now() + '.csv', 'text/csv');
+}
+
+function exportEnrichedExcel(){
+  var matched = STATE.enrich.results.filter(function(r){ return r.status === 'matched'; });
+  if(matched.length === 0){ alert('No matched rows to export'); return; }
+
+  try {
+    var data = matched.map(function(r){
+      var d = r.data;
+      return {
+        'Company': d.company,
+        'Contact': d.contact,
+        'Email': d.email,
+        'Phone': d.phone,
+        'Location': d.location,
+        'Address': d.address,
+        'Website': d.website,
+        'Employees': d.employees,
+        'Industry': d.industry,
+        'Rating': d.rating,
+        'Category': d.category,
+        'Founded': d.founded,
+        'Match Score': r.score
+      };
+    });
+    var ws = XLSX.utils.json_to_sheet(data);
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Enriched');
+    XLSX.writeFile(wb, 'enriched-' + Date.now() + '.xlsx');
+  } catch(e){
+    alert('❌ Excel export failed: ' + e.message);
+  }
+}
+
+// ==================== ENRICHMENT: CLEAR ====================
+function clearEnrichment(){
+  if(!confirm('Clear all enrichment results?')) return;
+  STATE.enrich.results = [];
+  STATE.enrich.rawRows = [];
+  STATE.enrich.matched = 0;
+  STATE.enrich.rejected = 0;
+  STATE.enrich.fileName = '';
+  document.getElementById('enrichResultCard').classList.add('hide');
+  document.getElementById('enrichProgressCard').classList.add('hide');
+  document.getElementById('enrichFileInfo').textContent = '';
+  document.getElementById('btn_enrich').disabled = true;
+  document.getElementById('enrichFile').value = '';
+  renderEnrichResults();
+  }
+
+  
+// ==================== PWA INSTALL ====================
+var deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', function(e){
+  e.preventDefault();
+  deferredPrompt = e;
+  var card = document.getElementById('installCard');
+  if(card) card.style.display = 'flex';
+});
+
+window.addEventListener('appinstalled', function(){
+  var card = document.getElementById('installCard');
+  if(card) card.style.display = 'none';
+  deferredPrompt = null;
+  console.log('✅ App installed');
+});
+
+function installApp(){
+  if(!deferredPrompt){
+    alert('Install not available.\n\nUse browser menu (⋮) → "Add to Home Screen"');
+    return;
+  }
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(function(choice){
+    if(choice.outcome === 'accepted'){
+      console.log('✅ Installation accepted');
+    } else {
+      console.log('❌ Installation dismissed');
+    }
+    deferredPrompt = null;
+  });
+}
+
+setTimeout(function(){
+  if(window.matchMedia('(display-mode: standalone)').matches){
+    var card = document.getElementById('installCard');
+    if(card) card.style.display = 'none';
+  }
+}, 1000);
+  
+// ==================== SHARE APP ====================
+function shareApp(){
+  var shareUrl = 'https://sevenhorses0.github.io/Seven-horses-data-collector/collector-install.html';
+  var shareText = 'Seven Horses Data Collector — Install our CRM app:\n\n' + shareUrl;
+  
+  // Try native share (mobile)
+  if(navigator.share){
+    navigator.share({
+      title: 'Seven Horses Data Collector',
+      text: 'Install Seven Horses Data Collector app',
+      url: shareUrl
+    }).then(function(){
+      console.log('✅ Shared successfully');
+    }).catch(function(err){
+      console.log('Share dismissed:', err.message);
+    });
+    return;
+  }
+  
+  // Fallback: copy to clipboard
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(shareText).then(function(){
+      alert('✅ Link copied to clipboard!\n\nShare it with your team members.');
+    }).catch(function(){
+      prompt('Copy this link:', shareUrl);
+    });
+    return;
+  }
+  
+  // Last fallback: show prompt
+  prompt('Copy this link:', shareUrl);
+}
+
+// ==================== QR CODE ====================
+function showQRCode(){
+  var shareUrl = 'https://sevenhorses0.github.io/Seven-horses-data-collector/collector-install.html';
+  var qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(shareUrl) + '&t=' + Date.now();
+  
+  var body = '<h3>📱 Scan to Install</h3>' +
+    '<p class="sub" style="font-size:12px;margin-bottom:14px;text-align:center">Open phone camera and scan this QR code</p>' +
+    '<div style="text-align:center;padding:20px;background:#fff;border-radius:14px;margin-bottom:14px">' +
+      '<img src="' + qrUrl + '" style="width:100%;max-width:280px;height:auto;display:block;margin:0 auto" alt="QR Code">' +
+    '</div>' +
+    '<div class="field">' +
+      '<label>Or share this link</label>' +
+      '<input type="text" value="' + escAttr(shareUrl) + '" readonly onclick="this.select()" style="font-size:11px">' +
+    '</div>' +
+    '<button class="blue" style="width:100%" onclick="navigator.clipboard.writeText(\'' + shareUrl + '\');alert(\'✅ Link copied!\')">📋 Copy Link</button>';
+  
+  showModal('Share App', body);
+}
+
+// ==================== INIT APP ====================
+function initApp(){
+  // Load saved results
+  loadSavedResults();
+
+  // Setup Enter key for login
+  var loginPass = document.getElementById('loginPass');
+  if(loginPass){
+    loginPass.addEventListener('keydown', function(e){
+      if(e.key === 'Enter') doLogin();
+    });
+  }
+
+  // Setup Enter key for setup
+  var setupAnswer = document.getElementById('setupAnswer');
+  if(setupAnswer){
+    setupAnswer.addEventListener('keydown', function(e){
+      if(e.key === 'Enter') doSetup();
+    });
+  }
+
+  console.log('✅ Seven Horses Data Collector loaded');
+  console.log('📅 Version 1.0.0');
+// ==================== BACK BUTTON HANDLER ====================
+window.addEventListener('popstate', function(e){
+  if(!STATE.loggedIn) return;
+  
+  if(STATE.currentTab && STATE.currentTab !== 'home'){
+    // Non-home tab → go to Home
+    switchTab('home');
+    try {
+      window.history.pushState({ page: 'app', tab: 'home' }, '', location.href);
+    } catch(err){}
+  }
+});
+}
+
+// ==================== BOOT CALL ====================
+initApp();
+boot();
+</script>
+</body>
+</html>
