@@ -53,8 +53,8 @@ button.gold:hover{box-shadow:0 10px 36px -6px rgba(232,184,106,.6);filter:bright
 <body>
 <div class="wrap">
 
-  <!-- Screen 1: Install button -->
-  <div id="screen-install">
+  <!-- SCREEN 1: Install Button -->
+  <div id="screen-install" class="status active">
     <div class="logo">7H</div>
     <h1>Seven Horses</h1>
     <p class="sub">Data Collector — Install App</p>
@@ -67,7 +67,7 @@ button.gold:hover{box-shadow:0 10px 36px -6px rgba(232,184,106,.6);filter:bright
     <button class="gold" id="installBtn" onclick="installApp()">⬇️ Install App</button>
   </div>
 
-  <!-- Screen 2: Installing (35 sec animation) -->
+  <!-- SCREEN 2: Installing (35 sec animation) -->
   <div id="screen-installing" class="status">
     <div class="spinner"></div>
     <div class="progress-text" id="progressText">Preparing install...</div>
@@ -75,7 +75,7 @@ button.gold:hover{box-shadow:0 10px 36px -6px rgba(232,184,106,.6);filter:bright
     <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
   </div>
 
-  <!-- Screen 3: Success -->
+  <!-- SCREEN 3: Success -->
   <div id="screen-success" class="status">
     <div class="success-icon">✓</div>
     <h2>App Successfully Installed!</h2>
@@ -84,7 +84,7 @@ button.gold:hover{box-shadow:0 10px 36px -6px rgba(232,184,106,.6);filter:bright
     <div class="hint-sub">Also search in app drawer: "Seven Horses" or "SH Collector"</div>
   </div>
 
-  <!-- Screen 4: Manual install instructions -->
+  <!-- SCREEN 4: Manual Install Instructions -->
   <div id="screen-manual" class="status">
     <div class="success-icon" style="background:rgba(232,184,106,.15);border-color:rgba(232,184,106,.4);color:#E8B86A">📱</div>
     <h2>Manual Install</h2>
@@ -102,7 +102,8 @@ button.gold:hover{box-shadow:0 10px 36px -6px rgba(232,184,106,.6);filter:bright
 // ==================== CONFIG ====================
 var deferredPrompt = null;
 var progressInterval = null;
-var INSTALL_DURATION = 35000; // 35 seconds total animation
+var INSTALL_DURATION = 35000; // 35 seconds total progress animation
+var SUCCESS_DELAY = 30000;    // 30 seconds wait after user accepts
 
 // ==================== SCREEN SWITCH ====================
 function showScreen(name){
@@ -120,45 +121,38 @@ function showScreen(name){
   }
 }
 
-// ==================== INSTALL PROMPT ====================
+// ==================== INSTALL PROMPT LISTENER ====================
 window.addEventListener('beforeinstallprompt', function(e){
   e.preventDefault();
   deferredPrompt = e;
   console.log('✅ Install prompt ready');
 });
 
-window.addEventListener('appinstalled', function(){
-  console.log('✅ App installed event fired');
-  deferredPrompt = null;
-  stopProgress();
-  showScreen('success');
-});
-
-// ==================== INSTALL PROGRESS ANIMATION ====================
+// ==================== PROGRESS ANIMATION ====================
 function startProgress(){
   var texts = [
-    { pct: 0,  main: 'Preparing install...', sub: 'Please wait, do not close this page' },
-    { pct: 15, main: 'Downloading files...', sub: 'App files are being downloaded' },
-    { pct: 35, main: 'Installing components...', sub: 'Please wait, a few seconds left' },
-    { pct: 55, main: 'Setting up...', sub: 'Almost done' },
-    { pct: 75, main: 'Finalizing...', sub: 'Just a little longer' },
-    { pct: 90, main: 'Almost complete...', sub: 'App is about to be ready' },
-    { pct: 100, main: 'Completing install...', sub: '' }
+    { pct: 0,  main: 'Preparing install...',      sub: 'Please wait, do not close this page' },
+    { pct: 15, main: 'Downloading files...',      sub: 'App files are being downloaded' },
+    { pct: 35, main: 'Installing components...',  sub: 'Please wait, a few seconds left' },
+    { pct: 55, main: 'Setting up...',             sub: 'Almost done' },
+    { pct: 75, main: 'Finalizing...',             sub: 'Just a little longer' },
+    { pct: 90, main: 'Almost complete...',        sub: 'App is about to be ready' },
+    { pct: 100,main: 'Completing install...',     sub: '' }
   ];
-  
+
   var startTime = Date.now();
   var bar = document.getElementById('progressBar');
   var mainEl = document.getElementById('progressText');
   var subEl = document.getElementById('progressSub');
-  
+
   if(progressInterval) clearInterval(progressInterval);
-  
+
   progressInterval = setInterval(function(){
     var elapsed = Date.now() - startTime;
     var pct = Math.min(100, Math.floor((elapsed / INSTALL_DURATION) * 100));
-    
+
     if(bar) bar.style.width = pct + '%';
-    
+
     for(var i = texts.length - 1; i >= 0; i--){
       if(pct >= texts[i].pct){
         if(mainEl) mainEl.textContent = texts[i].main;
@@ -166,7 +160,7 @@ function startProgress(){
         break;
       }
     }
-    
+
     if(pct >= 100){
       clearInterval(progressInterval);
       progressInterval = null;
@@ -183,41 +177,50 @@ function stopProgress(){
 
 // ==================== INSTALL APP ====================
 async function installApp(){
-  if(deferredPrompt){
-    showScreen('installing');
-    startProgress();
-    
-    await sleep(500);
-    
-    try {
-      deferredPrompt.prompt();
-      var choice = await deferredPrompt.userChoice;
-      
-      if(choice.outcome === 'accepted'){
-        console.log('✅ User accepted install');
-        setTimeout(function(){
-          if(document.getElementById('screen-installing').style.display !== 'none'){
-            stopProgress();
-            showScreen('success');
-          }
-        }, 30000);
-      } else {
-        console.log('❌ User dismissed');
-        stopProgress();
-        showScreen('install');
-      }
-    } catch(e){
-      console.error('Install error:', e);
-      stopProgress();
-      showScreen('manual');
-    }
-    
-    deferredPrompt = null;
+  // No prompt available → manual instructions
+  if(!deferredPrompt){
+    console.log('⚠️ No install prompt available');
+    showScreen('manual');
     return;
   }
-  
-  console.log('⚠️ No install prompt available');
-  showScreen('manual');
+
+  // Show installing screen first
+  showScreen('installing');
+  startProgress();
+
+  // Small delay so progress is visible before browser prompt
+  await sleep(400);
+
+  try {
+    // Trigger browser's native install prompt
+    deferredPrompt.prompt();
+
+    // Wait for user's choice
+    var choice = await deferredPrompt.userChoice;
+    console.log('User choice:', choice.outcome);
+
+    // Clear the prompt reference
+    deferredPrompt = null;
+
+    if(choice.outcome === 'accepted'){
+      // User clicked INSTALL → wait 30 sec → success
+      console.log('✅ User accepted — waiting 30 sec');
+      await sleep(SUCCESS_DELAY);
+      stopProgress();
+      showScreen('success');
+
+    } else {
+      // User clicked CANCEL → back to install screen
+      console.log('❌ User cancelled');
+      stopProgress();
+      showScreen('install');
+    }
+
+  } catch(e){
+    console.error('Install error:', e);
+    stopProgress();
+    showScreen('manual');
+  }
 }
 
 function sleep(ms){
